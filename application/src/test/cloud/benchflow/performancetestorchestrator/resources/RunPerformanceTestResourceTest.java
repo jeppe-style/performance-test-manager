@@ -46,9 +46,10 @@ public class RunPerformanceTestResourceTest {
 
         RunPerformanceTestResponse response = resource.runPerformanceTest(performanceTestName, expArchive);
 
-        Thread.sleep(15000);
-
         Assert.assertEquals(performanceTestName, response.getPerformanceTestId());
+
+        // TODO - remove after demo
+        Thread.sleep(15000);
 
     }
 
