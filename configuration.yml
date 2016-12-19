@@ -1,0 +1,53 @@
+#Dropwizard
+database:
+  name: ${env.DB_NAME!"experiments"}
+  address: ${env.DB_ADDRESS!"SET_ME"}
+  user: ${env.DB_USER!"root"}
+  password: ${env.DB_PASSWORD!""}
+  #  TODO - test that the below paths work in production (not yet used)
+#  hibernateConfig: ./application/src/main/resources/hibernate.cfg.xml
+#  createExperimentsTableQueryPath: ./application/src/main/resources/db/create-experiments-table.sql
+#  createTrialsTableQueryPath: ./application/src/main/resources/db/create-trials-table.sql
+
+benchflowEnv:
+  config.yml: /app/config.yml
+
+performance-experiment-manager:
+  address: ${env.MINIO_ADDRESS!"SET_ME"}
+
+minio:
+  address: ${env.MINIO_ADDRESS!"SET_ME"}
+
+server:
+  type: default
+  applicationConnectors:
+    - type: http
+      port: 8080
+      #bindHost: 127.0.0.1 # only bind to loopback
+  adminConnectors:
+    - type: http
+      port: 8081
+      #bindHost: 127.0.0.1 # only bind to loopback
+
+http:
+  timeout: 20000ms
+  connectionTimeout: 5000ms
+  timeToLive: 1h
+  cookiesEnabled: false
+  maxConnections: 1024
+  maxConnectionsPerRoute: 1024
+  keepAlive: 0ms
+  retries: 3
+
+logging:
+  level: DEBUG
+  loggers:
+    io.dropwizard: DEBUG
+    # TODO - log the right resources
+#    cloud.benchflow.experimentsmanager.resources.lifecycle.RunBenchmarkResource: ALL
+#    cloud.benchflow.experimentsmanager.resources.lifecycle.DeployBenchmarkResource: ALL
+  appenders:
+    - type: console
+      threshold: ALL
+      timeZone: UTC
+      target: stdout

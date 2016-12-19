@@ -1,0 +1,12 @@
+#Eclipse settings
+.settings
+.classpath
+
+#IntelliJ IDEA settings
+.idea
+
+#Build artefacts
+target
+
+#Local user files
+benchflow_make
