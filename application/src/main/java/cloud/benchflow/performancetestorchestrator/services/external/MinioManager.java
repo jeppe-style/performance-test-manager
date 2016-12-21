@@ -11,7 +11,7 @@ import java.io.InputStream;
  */
 public class MinioManager {
 
-    private static Logger logger = LoggerFactory.getLogger(MinioManager.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(MinioManager.class.getSimpleName());
 
     public void savePerformanceTestArchive(InputStream performanceTestArchive) {
 

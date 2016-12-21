@@ -12,11 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DataStore {
 
-    private static Logger logger = LoggerFactory.getLogger(DataStore.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(DataStore.class.getSimpleName());
 
-    private static Map<String, Boolean> performanceTestDataStore = new ConcurrentHashMap<>();
+    private static Map<String, Boolean> performanceTestDataStore = performanceTestDataStore = new ConcurrentHashMap<>();
 
-    public static boolean addPerformanceTest(String performanceTestID) {
+    public static Boolean addPerformanceTest(String performanceTestID) {
 
         logger.info("adding new performance test");
 
@@ -24,7 +24,7 @@ public class DataStore {
 
     }
 
-    public static boolean setPerformanceTestCompleted(String performanceTestID) {
+    public static Boolean setPerformanceTestCompleted(String performanceTestID) {
 
         logger.info("setting performance test completed");
 
@@ -32,7 +32,7 @@ public class DataStore {
 
     }
 
-    public static boolean getPerformanceTestStatus(String performanceTestID) {
+    public static Boolean getPerformanceTestStatus(String performanceTestID) {
 
         logger.info("getting performance test status");
 

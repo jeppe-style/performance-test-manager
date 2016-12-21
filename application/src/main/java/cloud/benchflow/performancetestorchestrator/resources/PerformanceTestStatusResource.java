@@ -1,7 +1,6 @@
 package cloud.benchflow.performancetestorchestrator.resources;
 
 import cloud.benchflow.performancetestorchestrator.api.PerformanceTestStatusResponse;
-import cloud.benchflow.performancetestorchestrator.services.external.MinioManager;
 import cloud.benchflow.performancetestorchestrator.services.internal.DataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,22 +17,22 @@ import javax.ws.rs.core.MediaType;
  */
 public class PerformanceTestStatusResource {
 
-    private Logger logger = LoggerFactory.getLogger(PerformanceTestStatusResource.class.getName());
+    private Logger logger = LoggerFactory.getLogger(PerformanceTestStatusResource.class.getSimpleName());
 
-    private MinioManager minioManager = new MinioManager();
-
+    public static String COMPLETED = "completed";
+    public static String RUNNING = "running";
 
     @GET
     @Path("{performanceTestID}/status")
     @Produces(MediaType.APPLICATION_JSON)
-    public PerformanceTestStatusResponse runPerformanceTest(@PathParam("performanceTestID") final String performanceTestID) {
+    public PerformanceTestStatusResponse getPerformanceTestStatus(@PathParam("performanceTestID") final String performanceTestID) {
 
         logger.info("request received: /" + performanceTestID + "/status");
 
 
         // get the status
 
-        String status = DataStore.getPerformanceTestStatus(performanceTestID) ? "completed" : "running";
+        String status = DataStore.getPerformanceTestStatus(performanceTestID) ? COMPLETED : RUNNING;
 
 
         return new PerformanceTestStatusResponse(status);

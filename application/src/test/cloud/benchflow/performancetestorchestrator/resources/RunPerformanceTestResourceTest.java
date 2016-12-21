@@ -20,17 +20,18 @@ import java.util.concurrent.ExecutorService;
  */
 public class RunPerformanceTestResourceTest {
 
-    private RunPerformanceTestResource resource;
+    @ClassRule
+    public static final DropwizardAppRule<PerformanceTestOrchestratorConfiguration> RULE = new DropwizardAppRule<>(
+            PerformanceTestOrchestratorApplication.class);
 
     String TEST_ARCHIVE_FILENAME = "src/test/resources/data/wfms.camunda.zip";
-
-    @ClassRule
-    public static final DropwizardAppRule<PerformanceTestOrchestratorConfiguration> RULE = new DropwizardAppRule<>(PerformanceTestOrchestratorApplication.class);
+    private RunPerformanceTestResource resource;
 
     @Before
     public void setUp() throws Exception {
 
-        ExecutorService performanceTestExecutor = PerformanceTestExecutor.createPerformanceTestExecutor(RULE.getEnvironment());
+        ExecutorService performanceTestExecutor = PerformanceTestExecutor.createPerformanceTestExecutor(
+                RULE.getEnvironment());
 
         resource = new RunPerformanceTestResource(performanceTestExecutor);
 

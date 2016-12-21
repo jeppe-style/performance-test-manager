@@ -12,9 +12,9 @@ import java.util.Random;
  */
 public class PerformanceExperimentManager {
 
-    public enum TrialStatus { NOT_COMPLETED, SUCCESS, ERROR, FAILURE }
+    public enum TrialStatus { RUNNING, SUCCESS, ERROR, FAILURE }
 
-    private Logger logger = LoggerFactory.getLogger(PerformanceExperimentManager.class.getName());
+    private Logger logger = LoggerFactory.getLogger(PerformanceExperimentManager.class.getSimpleName());
 
     private int trialID = 1;
 
@@ -33,7 +33,7 @@ public class PerformanceExperimentManager {
 
         RunExperimentResult result = new RunExperimentResult();
         result.experimentID = "test-experiment-" + id;
-        result.trialID = trialID;
+        result.trialID = trialID++;
 
         return result;
 
@@ -63,7 +63,7 @@ public class PerformanceExperimentManager {
 
         if (value < 0.3) {
 
-            return TrialStatus.NOT_COMPLETED;
+            return TrialStatus.RUNNING;
 
         } else if (value < 0.9) {
 

@@ -1,6 +1,7 @@
 package cloud.benchflow.performancetestorchestrator.models;
 
 import cloud.benchflow.performancetestorchestrator.api.RunPerformanceTestResponse;
+import cloud.benchflow.performancetestorchestrator.services.internal.DataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,16 +11,17 @@ import org.slf4j.LoggerFactory;
  */
 public class PerformanceTestModel implements Runnable {
 
-    private Logger logger = LoggerFactory.getLogger(PerformanceTestModel.class.getName());
-
-    private boolean completed;
+    private Logger logger = LoggerFactory.getLogger(PerformanceTestModel.class.getSimpleName());
 
     private String id;
     private int numExperiments = 3;
 
 
     public PerformanceTestModel(String id) {
+
         this.id = id;
+
+        DataStore.addPerformanceTest(id);
     }
 
     public String getId() {
@@ -32,10 +34,6 @@ public class PerformanceTestModel implements Runnable {
 
     }
 
-    public boolean isCompleted() {
-        return completed;
-    }
-
     @Override
     public void run() {
 
@@ -43,14 +41,14 @@ public class PerformanceTestModel implements Runnable {
 
         while (numExperiments > 0) {
 
-            logger.info("RUNNING NEW PERFORMANCE TEST (left=" + numExperiments + ")");
+            logger.info("RUNNING NEW PERFORMANCE EXPERIMENT (left=" + numExperiments + ")");
 
             numExperiments--;
             runNextExperiment();
 
         }
 
-        completed = true;
+        DataStore.setPerformanceTestCompleted(id);
 
     }
 

@@ -4,7 +4,7 @@ import cloud.benchflow.performancetestorchestrator.services.external.Performance
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static cloud.benchflow.performancetestorchestrator.services.external.PerformanceExperimentManager.TrialStatus.NOT_COMPLETED;
+import static cloud.benchflow.performancetestorchestrator.services.external.PerformanceExperimentManager.TrialStatus.RUNNING;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
@@ -12,7 +12,7 @@ import static cloud.benchflow.performancetestorchestrator.services.external.Perf
  */
 public class PerformanceExperimentModel implements Runnable {
 
-    private Logger logger = LoggerFactory.getLogger(PerformanceExperimentModel.class.getName());
+    private Logger logger = LoggerFactory.getLogger(PerformanceExperimentModel.class.getSimpleName());
 
     private int numTrials = 5;
 
@@ -36,7 +36,7 @@ public class PerformanceExperimentModel implements Runnable {
 
             PerformanceExperimentManager.TrialStatus trialStatus;
 
-            while ((trialStatus = experimentManager.getStatus(experimentID, trialID)) == NOT_COMPLETED) {
+            while ((trialStatus = experimentManager.getStatus(experimentID, trialID)) == RUNNING) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -65,6 +65,8 @@ public class PerformanceExperimentModel implements Runnable {
 
                 case FAILURE:
                     experimentManager.abortExperiment(experimentID);
+                    // abort experiment
+                    trialID = Integer.MAX_VALUE;
                     logger.info("aborting experiment " + experimentID);
                     break;
 
