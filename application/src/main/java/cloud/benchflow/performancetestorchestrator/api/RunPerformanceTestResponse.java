@@ -8,18 +8,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class RunPerformanceTestResponse {
 
-    @JsonProperty("experimentId")
-    private String performanceTestId;
+    @JsonProperty("performanceTestID")
+    private String performanceTestID;
 
-    public RunPerformanceTestResponse(String performanceTestId) {
-        this.performanceTestId = performanceTestId;
+    public RunPerformanceTestResponse(String performanceTestID) {
+        this.performanceTestID = performanceTestID;
     }
 
-    public String getPerformanceTestId() {
-        return performanceTestId;
+    public String getPerformanceTestID() {
+        return performanceTestID;
     }
 
-    public void setPerformanceTestId(String performanceTestId) {
-        this.performanceTestId = performanceTestId;
+    public void setPerformanceTestID(String performanceTestID) {
+        this.performanceTestID = performanceTestID;
     }
 }

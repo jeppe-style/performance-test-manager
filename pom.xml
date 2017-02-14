@@ -15,110 +15,139 @@
 
     <properties>
         <project.name>performance-test-orchestrator</project.name>
-        <project.mainclass>cloud.benchflow.performancetestorchestrator.PerformanceTestOrchestratorApplication</project.mainclass>
+        <project.mainclass>cloud.benchflow.performancetestorchestrator.PerformanceTestOrchestratorApplication
+        </project.mainclass>
         <project.configurationfile>configuration.yml</project.configurationfile>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <dropwizard.version>0.9.1</dropwizard.version>
-        <javax.mail.version>1.5.4</javax.mail.version>
-        <apache.commons.io.version>2.4</apache.commons.io.version>
         <dropwizard.template.config.version>1.1.0</dropwizard.template.config.version>
-        <dropwizard.guicey.version>3.0.1</dropwizard.guicey.version>
-        <commons.exec.version>1.3</commons.exec.version>
-        <log4j.version>2.3</log4j.version>
+        <morphia.version>1.3.2</morphia.version>
+        <!--<javax.mail.version>1.5.4</javax.mail.version>-->
+        <!--<apache.commons.io.version>2.4</apache.commons.io.version>-->
+        <!--<dropwizard.guicey.version>3.0.1</dropwizard.guicey.version>-->
+        <!--<commons.exec.version>1.3</commons.exec.version>-->
+        <!--<log4j.version>2.3</log4j.version>-->
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-core</artifactId>
-            <version>${dropwizard.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-testing</artifactId>
-            <version>${dropwizard.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-client</artifactId>
-            <version>${dropwizard.version}</version>
-        </dependency>
+    <!--<dependencies>-->
+    <!--<dependency>-->
+    <!--<groupId>io.dropwizard</groupId>-->
+    <!--<artifactId>dropwizard-core</artifactId>-->
+    <!--<version>${dropwizard.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>io.dropwizard</groupId>-->
+    <!--<artifactId>dropwizard-testing</artifactId>-->
+    <!--<version>${dropwizard.version}</version>-->
+    <!--<scope>test</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>io.dropwizard</groupId>-->
+    <!--<artifactId>dropwizard-client</artifactId>-->
+    <!--<version>${dropwizard.version}</version>-->
+    <!--</dependency>-->
 
-        <!--<dependency>-->
-            <!--<groupId>de.thomaskrille</groupId>-->
-            <!--<artifactId>dropwizard-template-config</artifactId>-->
-            <!--<version>${dropwizard.template.config.version}</version>-->
-        <!--</dependency>-->
+    <!--&lt;!&ndash; https://github.com/tkrille/dropwizard-template-config &ndash;&gt;-->
+    <!--<dependency>-->
+    <!--<groupId>de.thomaskrille</groupId>-->
+    <!--<artifactId>dropwizard-template-config</artifactId>-->
+    <!--<version>${dropwizard.template.config.version}</version>-->
+    <!--</dependency>-->
 
-        <!-- The official dropwizard-guice seems not work correctly in the latest release: hk2 conflict error -->
-        <!--<dependency>-->
-            <!--<groupId>ru.vyarus</groupId>-->
-            <!--<artifactId>dropwizard-guicey</artifactId>-->
-            <!--<version>${dropwizard.guicey.version}</version>-->
-        <!--</dependency>-->
+    <!--&lt;!&ndash;The official dropwizard-guice seems not work correctly in the latest release: hk2 conflict error&ndash;&gt;-->
+    <!--<dependency>-->
+    <!--<groupId>ru.vyarus</groupId>-->
+    <!--<artifactId>dropwizard-guicey</artifactId>-->
+    <!--<version>${dropwizard.guicey.version}</version>-->
+    <!--</dependency>-->
 
-        <!--<dependency>-->
-            <!--<groupId>com.sun.mail</groupId>-->
-            <!--<artifactId>javax.mail</artifactId>-->
-            <!--<version>${javax.mail.version}</version>-->
-        <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>com.sun.mail</groupId>-->
+    <!--<artifactId>javax.mail</artifactId>-->
+    <!--<version>${javax.mail.version}</version>-->
+    <!--</dependency>-->
 
-        <!--<dependency>-->
-            <!--<groupId>org.apache.directory.studio</groupId>-->
-            <!--<artifactId>org.apache.commons.io</artifactId>-->
-            <!--<version>${apache.commons.io.version}</version>-->
-        <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.apache.directory.studio</groupId>-->
+    <!--<artifactId>org.apache.commons.io</artifactId>-->
+    <!--<version>${apache.commons.io.version}</version>-->
+    <!--</dependency>-->
 
-        <!--<dependency>-->
-            <!--<groupId>org.apache.commons</groupId>-->
-            <!--<artifactId>commons-exec</artifactId>-->
-            <!--<version>${commons.exec.version}</version>-->
-        <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.apache.commons</groupId>-->
+    <!--<artifactId>commons-exec</artifactId>-->
+    <!--<version>${commons.exec.version}</version>-->
+    <!--</dependency>-->
 
-    </dependencies>
+    <!--</dependencies>-->
 
     <dependencyManagement>
         <dependencies>
-            <!--<dependency>-->
-            <!--<groupId>io.dropwizard</groupId>-->
-            <!--<artifactId>dropwizard-core</artifactId>-->
-            <!--<version>${dropwizard.version}</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-            <!--<groupId>io.dropwizard</groupId>-->
-            <!--<artifactId>dropwizard-testing</artifactId>-->
-            <!--<version>${dropwizard.version}</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-core</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-testing</artifactId>
+                <version>${dropwizard.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-client</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-forms</artifactId>
+                <version>${dropwizard.version}</version>
+                <type>pom</type>
+            </dependency>
+
+            <!-- https://github.com/tkrille/dropwizard-template-config -->
+            <!--A Dropwizard Bundle that allows you to write your config.yaml as a Freemarker template.-->
+            <!--This is especially useful when you need to access environment variables or system properties.-->
+            <!--In fact, this project is the successor to the fabulous dropwizard-environment-config plugin.-->
+            <dependency>
+                <groupId>de.thomaskrille</groupId>
+                <artifactId>dropwizard-template-config</artifactId>
+                <version>${dropwizard.template.config.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mongodb.morphia</groupId>
+                <artifactId>morphia</artifactId>
+                <version>${morphia.version}</version>
+            </dependency>
+
+
             <!--<groupId>com.sun.mail</groupId>-->
             <!--<artifactId>javax.mail</artifactId>-->
             <!--<version>${javax.mail.version}</version>-->
             <!--</dependency>-->
+
             <!--<dependency>-->
-                <!--<groupId>org.apache.directory.studio</groupId>-->
-                <!--<artifactId>org.apache.commons.io</artifactId>-->
-                <!--<version>${apache.commons.io.version}</version>-->
+            <!--<groupId>org.apache.directory.studio</groupId>-->
+            <!--<artifactId>org.apache.commons.io</artifactId>-->
+            <!--<version>${apache.commons.io.version}</version>-->
             <!--</dependency>-->
+
             <!--<dependency>-->
-                <!--<groupId>de.thomaskrille</groupId>-->
-                <!--<artifactId>dropwizard-template-config</artifactId>-->
-                <!--<version>${dropwizard.template.config.version}</version>-->
+            <!--<groupId>ru.vyarus</groupId>-->
+            <!--<artifactId>dropwizard-guicey</artifactId>-->
+            <!--<version>${dropwizard.guicey.version}</version>-->
             <!--</dependency>-->
+
             <!--<dependency>-->
-                <!--<groupId>ru.vyarus</groupId>-->
-                <!--<artifactId>dropwizard-guicey</artifactId>-->
-                <!--<version>${dropwizard.guicey.version}</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-                <!--<groupId>org.apache.commons</groupId>-->
-                <!--<artifactId>commons-exec</artifactId>-->
-                <!--<version>${commons.exec.version}</version>-->
+            <!--<groupId>org.apache.commons</groupId>-->
+            <!--<artifactId>commons-exec</artifactId>-->
+            <!--<version>${commons.exec.version}</version>-->
             <!--</dependency>-->
 
         </dependencies>
-
     </dependencyManagement>
 
     <build>
@@ -171,7 +200,7 @@
                         <configuration>
                             <transformers>
                                 <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>${project.mainclass}</mainClass>
@@ -198,7 +227,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19</version>
                 <configuration>
-                  <skipTests>false</skipTests>
+                    <skipTests>false</skipTests>
                 </configuration>
             </plugin>
         </plugins>

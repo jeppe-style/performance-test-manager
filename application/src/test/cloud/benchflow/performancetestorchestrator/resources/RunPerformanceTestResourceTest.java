@@ -1,18 +1,23 @@
 package cloud.benchflow.performancetestorchestrator.resources;
 
-import cloud.benchflow.performancetestorchestrator.PerformanceTestOrchestratorApplication;
 import cloud.benchflow.performancetestorchestrator.api.RunPerformanceTestResponse;
-import cloud.benchflow.performancetestorchestrator.configurations.PerformanceTestOrchestratorConfiguration;
-import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestExecutor;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import cloud.benchflow.performancetestorchestrator.helpers.TestArchives;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
-import java.io.FileInputStream;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
@@ -20,37 +25,62 @@ import java.util.concurrent.ExecutorService;
  */
 public class RunPerformanceTestResourceTest {
 
-    @ClassRule
-    public static final DropwizardAppRule<PerformanceTestOrchestratorConfiguration> RULE = new DropwizardAppRule<>(
-            PerformanceTestOrchestratorApplication.class);
+    private static final ExecutorService executorServiceMock = mock(ExecutorService.class);
 
-    String TEST_ARCHIVE_FILENAME = "src/test/resources/data/wfms.camunda.zip";
     private RunPerformanceTestResource resource;
+
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+
+//    @ClassRule
+//    public static final DropwizardAppRule<PerformanceTestOrchestratorConfiguration> RULE = new DropwizardAppRule<>(
+//            PerformanceTestOrchestratorApplication.class);
 
     @Before
     public void setUp() throws Exception {
 
-        ExecutorService performanceTestExecutor = PerformanceTestExecutor.createPerformanceTestExecutor(
-                RULE.getEnvironment());
+//        ExecutorService performanceTestExecutor = PerformanceTestExecutor.createPerformanceTestExecutor(
+//                RULE.getEnvironment());
 
-        resource = new RunPerformanceTestResource(performanceTestExecutor);
+        resource = new RunPerformanceTestResource(executorServiceMock);
 
     }
 
     @Test
-    public void runPerformanceTest() throws Exception {
+    public void runPerformanceTestEmptyRequest() throws Exception {
 
-        String performanceTestName = "myPerformanceTest";
+        exception.expect(WebApplicationException.class);
+        exception.expectMessage(String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
 
+        resource.runPerformanceTest(null);
 
-        InputStream expArchive = new FileInputStream(TEST_ARCHIVE_FILENAME);
+    }
 
-        RunPerformanceTestResponse response = resource.runPerformanceTest(performanceTestName, expArchive);
+    @Test
+    public void runPerformanceTestInValid() throws Exception {
 
-        Assert.assertEquals(performanceTestName, response.getPerformanceTestId());
+        InputStream expArchive = TestArchives.getInValidTestArchive();
 
-        // TODO - remove after demo
-        Thread.sleep(15000);
+        exception.expect(WebApplicationException.class);
+        exception.expectMessage(String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
+
+        resource.runPerformanceTest(expArchive);
+
+    }
+
+    @Test
+    public void runPerformanceTestValid() throws Exception {
+
+        String expectedPerformanceTestID = "benchflow.testNameExample.1.1.1";
+        InputStream expArchive = TestArchives.getValidTestArchive();
+
+        RunPerformanceTestResponse response = resource.runPerformanceTest(expArchive);
+
+        Assert.assertEquals(expectedPerformanceTestID, response.getPerformanceTestID());
+
+        verify(executorServiceMock, times(1)).submit(Mockito.any(Runnable.class));
 
     }
 

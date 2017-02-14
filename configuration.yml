@@ -12,11 +12,6 @@
 #benchflowEnv:
 #  config.yml: /app/config.yml
 #
-#performance-experiment-manager:
-#  address: ${env.MINIO_ADDRESS!"SET_ME"}
-#
-#minio:
-#  address: ${env.MINIO_ADDRESS!"SET_ME"}
 
 server:
   type: default
@@ -51,3 +46,9 @@ logging:
       threshold: ALL
       timeZone: UTC
       target: stdout
+
+performance-experiment-manager:
+  address: ${env.PEM_ADDRESS!"SET_ME"}
+
+minio:
+  address: ${env.MINIO_ADDRESS!"SET_ME"}

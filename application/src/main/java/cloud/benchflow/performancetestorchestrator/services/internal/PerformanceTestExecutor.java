@@ -42,7 +42,7 @@ public final class PerformanceTestExecutor {
         @Override
         public Thread newThread(@Nonnull Runnable r) {
             Thread thread = new Thread(r);
-            thread.setName("experiments-manager-" + count.incrementAndGet());
+            thread.setName("performance-test-orchestrator-" + count.incrementAndGet());
             thread.setDaemon(true);
             return thread;
         }

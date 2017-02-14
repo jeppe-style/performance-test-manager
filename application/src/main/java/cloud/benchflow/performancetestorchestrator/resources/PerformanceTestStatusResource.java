@@ -1,7 +1,6 @@
 package cloud.benchflow.performancetestorchestrator.resources;
 
-import cloud.benchflow.performancetestorchestrator.api.PerformanceTestStatusResponse;
-import cloud.benchflow.performancetestorchestrator.services.internal.DataStore;
+import cloud.benchflow.performancetestorchestrator.api.GetPerformanceTestStatusResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,23 +18,18 @@ public class PerformanceTestStatusResource {
 
     private Logger logger = LoggerFactory.getLogger(PerformanceTestStatusResource.class.getSimpleName());
 
-    public static String COMPLETED = "completed";
-    public static String RUNNING = "running";
-
     @GET
     @Path("{performanceTestID}/status")
     @Produces(MediaType.APPLICATION_JSON)
-    public PerformanceTestStatusResponse getPerformanceTestStatus(@PathParam("performanceTestID") final String performanceTestID) {
+    public GetPerformanceTestStatusResponse getPerformanceTestStatus(@PathParam("performanceTestID") final String performanceTestID) {
 
-        logger.info("request received: /" + performanceTestID + "/status");
+        logger.info("request received: GET /" + performanceTestID + "/status");
 
+        // TODO - get the PerformanceTestModel from DAO
 
-        // get the status
+        // TODO - return the status
 
-        String status = DataStore.getPerformanceTestStatus(performanceTestID) ? COMPLETED : RUNNING;
-
-
-        return new PerformanceTestStatusResponse(status);
+        return new GetPerformanceTestStatusResponse();
 
     }
 }

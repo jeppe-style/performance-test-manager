@@ -4,7 +4,9 @@ import cloud.benchflow.performancetestorchestrator.configurations.PerformanceTes
 import cloud.benchflow.performancetestorchestrator.resources.PerformanceTestStatusResource;
 import cloud.benchflow.performancetestorchestrator.resources.RunPerformanceTestResource;
 import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestExecutor;
+import de.thomaskrille.dropwizard_template_config.TemplateConfigBundle;
 import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 import java.util.concurrent.ExecutorService;
@@ -20,6 +22,14 @@ public class PerformanceTestOrchestratorApplication extends Application<Performa
     @Override
     public String getName() {
         return "performance-test-orchestrator";
+    }
+
+    @Override
+    public void initialize(Bootstrap<PerformanceTestOrchestratorConfiguration> bootstrap) {
+
+        // Dropwizard Template Config
+        bootstrap.addBundle(new TemplateConfigBundle());
+
     }
 
     @Override

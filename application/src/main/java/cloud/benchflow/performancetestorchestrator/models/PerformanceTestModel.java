@@ -1,81 +1,28 @@
 package cloud.benchflow.performancetestorchestrator.models;
 
-import cloud.benchflow.performancetestorchestrator.api.RunPerformanceTestResponse;
-import cloud.benchflow.performancetestorchestrator.services.internal.DataStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.List;
+
+import static cloud.benchflow.performancetestorchestrator.models.PerformanceTestModel.PerformanceTestState.READY;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 18.12.16.
  */
-public class PerformanceTestModel implements Runnable {
+public class PerformanceTestModel {
 
-    private Logger logger = LoggerFactory.getLogger(PerformanceTestModel.class.getSimpleName());
+    public enum PerformanceTestState { READY, RUNNNING, COMPLETED }
 
-    private String id;
-    private int numExperiments = 3;
+    private final String performanceTestID;
+    private PerformanceTestState state;
 
+    private List<PerformanceExperimentModel> experiments;
 
-    public PerformanceTestModel(String id) {
+    public PerformanceTestModel(String performanceTestID) {
 
-        this.id = id;
+        this.performanceTestID = performanceTestID;
+        this.state = READY;
 
-        DataStore.addPerformanceTest(id);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public RunPerformanceTestResponse getResponse() {
-
-        return new RunPerformanceTestResponse(id);
-
-    }
-
-    @Override
-    public void run() {
-
-        // TODO
-
-        while (numExperiments > 0) {
-
-            logger.info("RUNNING NEW PERFORMANCE EXPERIMENT (left=" + numExperiments + ")");
-
-            numExperiments--;
-            runNextExperiment();
-
-        }
-
-        DataStore.setPerformanceTestCompleted(id);
-
-    }
-
-    private void runNextExperiment() {
-
-        // generate experiment
-        PerformanceExperimentModel performanceExperiment = generateNextExperiment();
-
-        // TODO - put this in a queue
-        // run experiment
-        Thread experimentThread = new Thread(performanceExperiment);
-
-        experimentThread.start();
-
-        try {
-            experimentThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private PerformanceExperimentModel generateNextExperiment() {
-
-        logger.info("generating new performance experiment");
-
-        return new PerformanceExperimentModel();
-
+        this.experiments = new ArrayList<>();
     }
 }
