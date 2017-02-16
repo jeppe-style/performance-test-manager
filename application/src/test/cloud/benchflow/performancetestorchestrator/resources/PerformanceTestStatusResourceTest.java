@@ -1,14 +1,19 @@
 package cloud.benchflow.performancetestorchestrator.resources;
 
-import cloud.benchflow.performancetestorchestrator.PerformanceTestOrchestratorApplication;
-import cloud.benchflow.performancetestorchestrator.configurations.PerformanceTestOrchestratorConfiguration;
-import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestExecutor;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import cloud.benchflow.performancetestorchestrator.api.response.GetPerformanceTestStatusResponse;
+import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDDoesNotExistException;
+import cloud.benchflow.performancetestorchestrator.exceptions.web.InvalidPerformanceTestIDException;
+import cloud.benchflow.performancetestorchestrator.helpers.TestArchives;
+import cloud.benchflow.performancetestorchestrator.models.PerformanceTestModel;
+import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
-import java.util.concurrent.ExecutorService;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
@@ -16,45 +21,57 @@ import java.util.concurrent.ExecutorService;
  */
 public class PerformanceTestStatusResourceTest {
 
-    private RunPerformanceTestResource runResources;
+//    @ClassRule
+//    public static final DropwizardAppRule<PerformanceTestOrchestratorConfiguration> RULE = new DropwizardAppRule<>(PerformanceTestOrchestratorApplication.class);
 
-    String TEST_ARCHIVE_FILENAME = "src/test/resources/data/wfms.camunda.valid.zip";
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
-    @ClassRule
-    public static final DropwizardAppRule<PerformanceTestOrchestratorConfiguration> RULE = new DropwizardAppRule<>(PerformanceTestOrchestratorApplication.class);
+    private PerformanceTestModelDAO daoMock = Mockito.mock(PerformanceTestModelDAO.class);
+
     private PerformanceTestStatusResource statusResource;
+
+    // TODO - check for null arguments
 
     @Before
     public void setUp() throws Exception {
 
-        ExecutorService performanceTestExecutor = PerformanceTestExecutor.createPerformanceTestExecutor(RULE.getEnvironment());
+//        ExecutorService performanceTestExecutor = PerformanceTestExecutor.createPerformanceTestExecutor(RULE.getEnvironment());
 
-        runResources = new RunPerformanceTestResource(performanceTestExecutor);
-
-        statusResource = new PerformanceTestStatusResource();
+        statusResource = new PerformanceTestStatusResource(daoMock);
 
     }
 
     @Test
-    public void getPerformanceTestStatus() throws Exception {
+    public void getPerformanceTestStatusInValid() throws Exception {
 
-//        String performanceTestName = "myPerformanceTest";
-//
-//        InputStream expArchive = new FileInputStream(TEST_ARCHIVE_FILENAME);
-//
-//        RunPerformanceTestResponse response = runResources.runPerformanceTest(performanceTestName, expArchive);
-//
-//        PerformanceTestStatusResponse statusResponse = statusResource.getPerformanceTestStatus(response.getPerformanceTestId());
-//
-//        while (statusResponse.getStatus().equals(PerformanceTestStatusResource.RUNNING)) {
-//
-//            Thread.sleep(1000);
-//
-//            statusResponse = statusResource.getPerformanceTestStatus(response.getPerformanceTestId());
-//
-//        }
-//
-//        Assert.assertEquals(PerformanceTestStatusResource.COMPLETED, statusResponse.getStatus());
+        String performanceTestID = "inValid";
+
+        doThrow(PerformanceTestIDDoesNotExistException.class).when(daoMock).getPerformanceTestModel(performanceTestID);
+
+        exception.expect(InvalidPerformanceTestIDException.class);
+
+        statusResource.getPerformanceTestStatus(performanceTestID);
+
+        verify(daoMock, times(1)).getPerformanceTestModel(performanceTestID);
+
+    }
+
+    @Test
+    public void getPerformanceTestStatusValid() throws Exception {
+
+        String performanceTestID = TestArchives.VALID_PERFORMANCE_TEST_ID;
+
+        doReturn(new PerformanceTestModel(performanceTestID)).when(daoMock).getPerformanceTestModel(performanceTestID);
+
+        GetPerformanceTestStatusResponse response = statusResource.getPerformanceTestStatus(performanceTestID);
+
+        verify(daoMock, times(1)).getPerformanceTestModel(performanceTestID);
+
+        // TODO - decide what status should contain and make assertions accordingly
+
+        Assert.assertNotNull(response);
+        Assert.assertEquals(performanceTestID, response.getPerformanceTestID());
 
     }
 

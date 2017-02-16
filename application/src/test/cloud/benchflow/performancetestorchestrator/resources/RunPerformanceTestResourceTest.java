@@ -1,7 +1,12 @@
 package cloud.benchflow.performancetestorchestrator.resources;
 
-import cloud.benchflow.performancetestorchestrator.api.RunPerformanceTestResponse;
+import cloud.benchflow.performancetestorchestrator.api.response.RunPerformanceTestResponse;
+import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDAlreadyExistsException;
+import cloud.benchflow.performancetestorchestrator.exceptions.web.PerformanceTestIDExistsException;
 import cloud.benchflow.performancetestorchestrator.helpers.TestArchives;
+import cloud.benchflow.performancetestorchestrator.services.external.MinioService;
+import cloud.benchflow.performancetestorchestrator.services.external.PerformanceExperimentManagerService;
+import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,9 +20,8 @@ import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static cloud.benchflow.performancetestorchestrator.helpers.TestArchives.VALID_PERFORMANCE_TEST_ID;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
@@ -25,7 +29,11 @@ import static org.mockito.Mockito.verify;
  */
 public class RunPerformanceTestResourceTest {
 
+    // Mocks
     private static final ExecutorService executorServiceMock = mock(ExecutorService.class);
+    private MinioService minioServiceMock = Mockito.mock(MinioService.class);
+    private PerformanceTestModelDAO daoMock = Mockito.mock(PerformanceTestModelDAO.class);
+    private PerformanceExperimentManagerService peManagerServiceMock = Mockito.mock(PerformanceExperimentManagerService.class);
 
     private RunPerformanceTestResource resource;
 
@@ -44,7 +52,7 @@ public class RunPerformanceTestResourceTest {
 //        ExecutorService performanceTestExecutor = PerformanceTestExecutor.createPerformanceTestExecutor(
 //                RULE.getEnvironment());
 
-        resource = new RunPerformanceTestResource(executorServiceMock);
+        resource = new RunPerformanceTestResource(executorServiceMock, minioServiceMock, daoMock, peManagerServiceMock);
 
     }
 
@@ -59,28 +67,42 @@ public class RunPerformanceTestResourceTest {
     }
 
     @Test
-    public void runPerformanceTestInValid() throws Exception {
+    public void runPerformanceTestValid() throws Exception {
 
-        InputStream expArchive = TestArchives.getInValidTestArchive();
+        InputStream expArchive = TestArchives.getValidTestArchive();
 
-        exception.expect(WebApplicationException.class);
-        exception.expectMessage(String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
+        RunPerformanceTestResponse response = resource.runPerformanceTest(expArchive);
+
+        Assert.assertEquals(VALID_PERFORMANCE_TEST_ID, response.getPerformanceTestID());
+
+        verify(executorServiceMock, times(1)).submit(Mockito.any(Runnable.class));
+
+    }
+
+    @Test
+    public void runPerformanceTestAlreadyExistsException() throws Exception {
+
+        InputStream expArchive = TestArchives.getValidTestArchive();
+
+        doThrow(PerformanceTestIDAlreadyExistsException.class).when(daoMock).addPerformanceTestModel(VALID_PERFORMANCE_TEST_ID);
+
+        exception.expect(PerformanceTestIDExistsException.class);
 
         resource.runPerformanceTest(expArchive);
 
     }
 
     @Test
-    public void runPerformanceTestValid() throws Exception {
+    public void runPerformanceTestInValid() throws Exception {
 
-        String expectedPerformanceTestID = "benchflow.testNameExample.1.1.1";
-        InputStream expArchive = TestArchives.getValidTestArchive();
+        // TODO
 
-        RunPerformanceTestResponse response = resource.runPerformanceTest(expArchive);
-
-        Assert.assertEquals(expectedPerformanceTestID, response.getPerformanceTestID());
-
-        verify(executorServiceMock, times(1)).submit(Mockito.any(Runnable.class));
+//        InputStream expArchive = TestArchives.getInValidTestArchive();
+//
+//        exception.expect(WebApplicationException.class);
+//        exception.expectMessage(String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
+//
+//        resource.runPerformanceTest(expArchive);
 
     }
 

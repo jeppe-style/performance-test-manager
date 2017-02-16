@@ -1,15 +1,17 @@
 package cloud.benchflow.performancetestorchestrator.resources;
 
-import cloud.benchflow.performancetestorchestrator.api.ChangePerformanceTestStateResponse;
+import cloud.benchflow.performancetestorchestrator.api.request.ChangePerformanceTestStateRequest;
+import cloud.benchflow.performancetestorchestrator.api.response.ChangePerformanceTestStateResponse;
+import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDDoesNotExistException;
+import cloud.benchflow.performancetestorchestrator.exceptions.web.InvalidPerformanceTestIDException;
 import cloud.benchflow.performancetestorchestrator.models.PerformanceTestModel;
-import org.glassfish.jersey.media.multipart.FormDataParam;
+import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -20,21 +22,33 @@ public class PerformanceTestStateResource {
 
     private Logger logger = LoggerFactory.getLogger(PerformanceTestStateResource.class.getSimpleName());
 
-    // TODO
+    private PerformanceTestModelDAO dao;
+
+    public PerformanceTestStateResource(PerformanceTestModelDAO dao) {
+        this.dao = dao;
+    }
 
     @PUT
     @Path("{performanceTestID}/state")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangePerformanceTestStateResponse changePerformanceTestState(@PathParam("performanceTestID") final String performanceTestID,
-                                                                         @FormDataParam("performanceTest") final PerformanceTestModel.PerformanceTestState state) {
+                                                                         @NotNull @Valid final ChangePerformanceTestStateRequest stateRequest) {
 
         logger.info("request received: PUT /" + performanceTestID + "/state");
 
-        // TODO - get the PerformanceTestModel from DAO
+        // TODO - handle the actual state change (e.g. on PE Manager)
 
-        // TODO - update the state
+        // update the state
+        PerformanceTestModel.PerformanceTestState newState = null;
+        try {
+            newState = dao.setPerformanceTestState(performanceTestID, stateRequest.getState());
+        } catch (PerformanceTestIDDoesNotExistException e) {
+            throw new InvalidPerformanceTestIDException();
+        }
 
-        return new ChangePerformanceTestStateResponse();
+        // return the state as saved
+        return new ChangePerformanceTestStateResponse(newState);
 
     }
 }

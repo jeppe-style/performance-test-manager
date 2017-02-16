@@ -1,6 +1,11 @@
 package cloud.benchflow.performancetestorchestrator.resources;
 
-import cloud.benchflow.performancetestorchestrator.api.RunPerformanceTestResponse;
+import cloud.benchflow.performancetestorchestrator.api.response.RunPerformanceTestResponse;
+import cloud.benchflow.performancetestorchestrator.exceptions.web.PerformanceTestIDExistsException;
+import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDAlreadyExistsException;
+import cloud.benchflow.performancetestorchestrator.services.external.MinioService;
+import cloud.benchflow.performancetestorchestrator.services.external.PerformanceExperimentManagerService;
+import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
 import cloud.benchflow.performancetestorchestrator.tasks.RunPerformanceTestTask;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -10,6 +15,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.zip.ZipInputStream;
@@ -20,12 +26,17 @@ import java.util.zip.ZipInputStream;
  */
 public class RunPerformanceTestResource {
 
+    private final ExecutorService taskExecutorService;
+    private final MinioService minioService;
+    private final PerformanceTestModelDAO dao;
+    private final PerformanceExperimentManagerService peManagerService;
     private Logger logger = LoggerFactory.getLogger(RunPerformanceTestResource.class.getSimpleName());
 
-    private ExecutorService taskExecutorService;
-
-    public RunPerformanceTestResource(ExecutorService taskExecutorService) {
+    public RunPerformanceTestResource(ExecutorService taskExecutorService, MinioService minioService, PerformanceTestModelDAO dao, PerformanceExperimentManagerService peManagerService) {
         this.taskExecutorService = taskExecutorService;
+        this.minioService = minioService;
+        this.dao = dao;
+        this.peManagerService = peManagerService;
     }
 
     @POST
@@ -37,34 +48,38 @@ public class RunPerformanceTestResource {
         logger.info("request received: /run-performance-test/");
 
         if (performanceTestArchive == null) {
-            throw  new WebApplicationException(Response.Status.BAD_REQUEST);
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
         // TODO - validate performanceTestArchive content
 
         // TODO - return here if failure
+//        throw new InvalidTestArchiveException();
 
-        // create new RunPerformanceTestTask
+        // create new RunPerformanceTestTask and schedule it
+        try {
 
-        RunPerformanceTestTask task = new RunPerformanceTestTask(new ZipInputStream(performanceTestArchive));
+            RunPerformanceTestTask task = new RunPerformanceTestTask(new ZipInputStream(performanceTestArchive),
+                                                                     minioService,
+                                                                     dao,
+                                                                     peManagerService);
 
-        // get the ID
+            String performanceTestID = task.getPerformanceTestID();
 
-        String performanceTestID = task.getPerformanceTestID();
+            taskExecutorService.submit(task);
 
-        // schedule new RunPerformanceTestTask
+            return new RunPerformanceTestResponse(performanceTestID);
 
-        taskExecutorService.submit(task);
 
-        // return with ID
-
-        return new RunPerformanceTestResponse(performanceTestID);
+        } catch (IOException e) {
+            // should not be thrown since we already verified the archive before the try clause
+            e.printStackTrace();
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        } catch (PerformanceTestIDAlreadyExistsException exception) {
+            throw new PerformanceTestIDExistsException();
+        }
 
     }
-
-
-
-
 
 
 }

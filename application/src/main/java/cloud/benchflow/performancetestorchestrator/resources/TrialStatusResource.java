@@ -1,17 +1,19 @@
 package cloud.benchflow.performancetestorchestrator.resources;
 
-import org.glassfish.jersey.media.multipart.FormDataParam;
+import cloud.benchflow.performancetestorchestrator.api.request.SubmitTrialStatusRequest;
+import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDDoesNotExistException;
+import cloud.benchflow.performancetestorchestrator.exceptions.web.InvalidPerformanceTestIDException;
+import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
-
-import java.io.InputStream;
-import java.util.concurrent.ExecutorService;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
@@ -21,27 +23,32 @@ public class TrialStatusResource {
 
     private Logger logger = LoggerFactory.getLogger(TrialStatusResource.class.getSimpleName());
 
-    private ExecutorService taskExecutorService;
+    private PerformanceTestModelDAO dao;
 
-    public TrialStatusResource(ExecutorService taskExecutorService) {
-        this.taskExecutorService = taskExecutorService;
+    public TrialStatusResource(PerformanceTestModelDAO dao) {
+        this.dao = dao;
     }
 
     @POST
     @Path("/{performanceTestID}/{performanceExperimentID}/{trialID}/status")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Consumes(MediaType.APPLICATION_JSON)
     public void submitTrialStatus(@PathParam("performanceTestID") final String performanceTestID,
                                   @PathParam("performanceExperimentID") final String performanceExperimentID,
                                   @PathParam("trialID") final String trialID,
-                                  @FormDataParam("performanceTest") final InputStream performanceTestArchive) {
+                                  @NotNull @Valid final SubmitTrialStatusRequest statusRequest) {
 
+        logger.info("request received: POST /" + performanceTestID +
+                            "/" + performanceExperimentID +
+                            "/" + trialID +
+                            "/status : " + statusRequest.getStatus().name());
 
-        // TODO - get the PerformanceExperimentModel from the DAO
+        try {
 
-        // TODO - add the trial status
+            dao.addTrialStatus(performanceTestID, performanceExperimentID, trialID, statusRequest.getStatus());
 
-        // TODO - return if OK
-
+        } catch (PerformanceTestIDDoesNotExistException e) {
+            throw new InvalidPerformanceTestIDException();
+        }
 
     }
 

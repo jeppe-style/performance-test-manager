@@ -1,13 +1,13 @@
 package cloud.benchflow.performancetestorchestrator.tasks;
 
 import cloud.benchflow.performancetestorchestrator.definitions.PerformanceTestDefinition;
+import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDAlreadyExistsException;
+import cloud.benchflow.performancetestorchestrator.services.external.MinioService;
+import cloud.benchflow.performancetestorchestrator.services.external.PerformanceExperimentManagerService;
+import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
+import cloud.benchflow.performancetestorchestrator.util.PerformanceExperimentArchiveExtractor;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -20,65 +20,26 @@ public class RunPerformanceTestTask implements Runnable {
     private final ZipInputStream performanceTestArchive;
     private final PerformanceTestDefinition performanceTestDefinition;
 
-    public RunPerformanceTestTask(ZipInputStream performanceTestArchive) {
+    private final MinioService minioService;
+    private final PerformanceTestModelDAO dao;
+    private final PerformanceExperimentManagerService peManagerService;
+
+    public RunPerformanceTestTask(ZipInputStream performanceTestArchive, MinioService minioService, PerformanceTestModelDAO dao, PerformanceExperimentManagerService peManagerService) throws IOException, PerformanceTestIDAlreadyExistsException {
 
         this.performanceTestArchive = performanceTestArchive;
+        this.minioService = minioService;
+        this.dao = dao;
+        this.peManagerService = peManagerService;
 
         // get the PerformanceTestID from the archive
-        performanceTestDefinition = new PerformanceTestDefinition(extractPerformanceTestDefintion());
+        String definition = PerformanceExperimentArchiveExtractor.extractPerformanceTestDefinition(performanceTestArchive);
+
+        performanceTestDefinition = new PerformanceTestDefinition(definition);
 
         performanceTestID = performanceTestDefinition.getID();
 
-    }
-
-    private String extractPerformanceTestDefintion() {
-
-        BiPredicate<ZipEntry, String> isExpConfigEntry = (e, s) -> e.getName().endsWith(s);
-        Predicate<ZipEntry> isExpConfig = e -> isExpConfigEntry.test(e, "/benchflow-test.yml");
-
-        ZipEntry zipEntry;
-
-        try {
-
-            while ((zipEntry = performanceTestArchive.getNextEntry()) != null) {
-
-                if (isExpConfig.test(zipEntry)) {
-
-                    return readZipEntry(performanceTestArchive);
-
-                }
-
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-
-    }
-
-    /**
-     * Reads the data from the current ZipEntry in a ZipInputStream to a String.
-     *
-     * @param inputStream
-     * @return
-     * @throws IOException
-     */
-    private String readZipEntry(ZipInputStream inputStream) throws IOException {
-
-        byte[] buffer = new byte[1024];
-
-        int len;
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        while ((len = inputStream.read(buffer)) > 0) {
-            out.write(buffer, 0, len);
-        }
-
-        return out.toString(StandardCharsets.UTF_8.name());
+        // add to DAO (make sure it doesn't already exist)
+        dao.addPerformanceTestModel(performanceTestID);
 
     }
 
@@ -89,13 +50,18 @@ public class RunPerformanceTestTask implements Runnable {
     @Override
     public void run() {
 
-        // TODO - save performanceTestArchive to Minio
+        // save performanceTestArchive to Minio
+        minioService.savePerformanceTestArchive(performanceTestID, performanceTestArchive);
 
-        // TODO - create PT Model and save to DAO
+        // TODO - generate the performanceExperimentArchive and save to minio
 
-        // TODO - generate the experiment definition and performanceExperimentArchive and save to minio
+        String performanceExperimentID = performanceTestID;
 
-        // TODO - run PE on PEManager
+        minioService.savePerformanceExperimentArchive(performanceTestID, performanceExperimentID, performanceTestArchive);
+
+        // run PE on PEManager
+        peManagerService.runPerformanceExperiment(performanceExperimentID);
 
     }
+
 }

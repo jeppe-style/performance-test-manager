@@ -1,4 +1,4 @@
-package cloud.benchflow.performancetestorchestrator.api;
+package cloud.benchflow.performancetestorchestrator.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -2,7 +2,6 @@ package cloud.benchflow.performancetestorchestrator;
 
 import cloud.benchflow.performancetestorchestrator.configurations.PerformanceTestOrchestratorConfiguration;
 import cloud.benchflow.performancetestorchestrator.resources.PerformanceTestStatusResource;
-import cloud.benchflow.performancetestorchestrator.resources.RunPerformanceTestResource;
 import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestExecutor;
 import de.thomaskrille.dropwizard_template_config.TemplateConfigBundle;
 import io.dropwizard.Application;
@@ -39,9 +38,10 @@ public class PerformanceTestOrchestratorApplication extends Application<Performa
         // thread pools
         ExecutorService performanceTestExecutor = PerformanceTestExecutor.createPerformanceTestExecutor(environment);
 
-        // resources
-        final RunPerformanceTestResource runResource = new RunPerformanceTestResource(performanceTestExecutor);
-        final PerformanceTestStatusResource statusResource = new PerformanceTestStatusResource();
+        // TODO -resources
+//        final RunPerformanceTestResource runResource = new RunPerformanceTestResource(performanceTestExecutor);
+        // TODO - use real DAO
+        final PerformanceTestStatusResource statusResource = new PerformanceTestStatusResource(null);
 
         // health checks
 //        final TemplateHealthCheck healthCheck =
@@ -49,7 +49,7 @@ public class PerformanceTestOrchestratorApplication extends Application<Performa
 //        environment.healthChecks().register("template", healthCheck);
 
 
-        environment.jersey().register(runResource);
+//        environment.jersey().register(runResource);
         environment.jersey().register(statusResource);
 
     }

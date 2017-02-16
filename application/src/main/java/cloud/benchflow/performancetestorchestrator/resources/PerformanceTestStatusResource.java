@@ -1,6 +1,10 @@
 package cloud.benchflow.performancetestorchestrator.resources;
 
-import cloud.benchflow.performancetestorchestrator.api.GetPerformanceTestStatusResponse;
+import cloud.benchflow.performancetestorchestrator.api.response.GetPerformanceTestStatusResponse;
+import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDDoesNotExistException;
+import cloud.benchflow.performancetestorchestrator.exceptions.web.InvalidPerformanceTestIDException;
+import cloud.benchflow.performancetestorchestrator.models.PerformanceTestModel;
+import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +22,12 @@ public class PerformanceTestStatusResource {
 
     private Logger logger = LoggerFactory.getLogger(PerformanceTestStatusResource.class.getSimpleName());
 
+    private PerformanceTestModelDAO dao;
+
+    public PerformanceTestStatusResource(PerformanceTestModelDAO dao) {
+        this.dao = dao;
+    }
+
     @GET
     @Path("{performanceTestID}/status")
     @Produces(MediaType.APPLICATION_JSON)
@@ -25,11 +35,17 @@ public class PerformanceTestStatusResource {
 
         logger.info("request received: GET /" + performanceTestID + "/status");
 
-        // TODO - get the PerformanceTestModel from DAO
+        // get the PerformanceTestModel from DAO
 
-        // TODO - return the status
+        PerformanceTestModel performanceTestModel = null;
 
-        return new GetPerformanceTestStatusResponse();
+        try {
+            performanceTestModel = dao.getPerformanceTestModel(performanceTestID);
+        } catch (PerformanceTestIDDoesNotExistException e) {
+            throw new InvalidPerformanceTestIDException();
+        }
+
+        return new GetPerformanceTestStatusResponse(performanceTestModel.getPerformanceTestID());
 
     }
 }

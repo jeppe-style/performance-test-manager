@@ -1,6 +1,7 @@
 package cloud.benchflow.performancetestorchestrator.tasks;
 
 import cloud.benchflow.performancetestorchestrator.models.PerformanceExperimentModel;
+import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
@@ -13,11 +14,16 @@ public class SubmitTrialStatusTask implements Runnable {
     private final String trialID;
     private final PerformanceExperimentModel.TrialStatus trialStatus;
 
-    public SubmitTrialStatusTask(String performanceTestID, String performanceExperimentID, String trialID, PerformanceExperimentModel.TrialStatus trialStatus) {
+    private PerformanceTestModelDAO dao;
+
+    public SubmitTrialStatusTask(String performanceTestID, String performanceExperimentID, String trialID, PerformanceExperimentModel.TrialStatus trialStatus, PerformanceTestModelDAO dao) {
+
         this.performanceTestID = performanceTestID;
         this.performanceExperimentID = performanceExperimentID;
         this.trialID = trialID;
         this.trialStatus = trialStatus;
+
+        this.dao = dao;
     }
 
     @Override

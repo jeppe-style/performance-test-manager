@@ -15,7 +15,10 @@ public class TestArchives {
 
     private static final String INVALID_TEST_ARCHIVE_FILENAME = "src/test/resources/data/wfms.camunda.invalid.zip";
 
-    public static final String validPerformanceTestID = "benchflow.testNameExample.1.1.1";
+    public static final String VALID_PERFORMANCE_TEST_ID = "benchflow.testNameExample.1.1.1";
+    public static final String INVALID_PERFORMANCE_TEST_ID = "benchflow.invalid.1.1.1";
+    public static final String PERFORMANCE_EXPERIMENT_ID = "benchflow.experimentNameExample.1.1.1";
+
 
 
     public static InputStream getValidTestArchive() throws FileNotFoundException {
