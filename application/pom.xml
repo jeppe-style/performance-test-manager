@@ -37,7 +37,7 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-forms</artifactId>
-            <!--<returnType>pom</returnType>-->
+            <type>pom</type>
         </dependency>
 
         <dependency>

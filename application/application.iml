@@ -106,7 +106,6 @@
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.9" level="project" />
     <orderEntry type="library" name="Maven: io.dropwizard.metrics:metrics-httpclient:3.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.connectors:jersey-apache-connector:2.23.2" level="project" />
-    <orderEntry type="library" name="Maven: io.dropwizard:dropwizard-forms:1.0.6" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.media:jersey-media-multipart:2.23.2" level="project" />
     <orderEntry type="library" name="Maven: org.jvnet.mimepull:mimepull:1.9.6" level="project" />
     <orderEntry type="library" name="Maven: de.thomaskrille:dropwizard-template-config:1.4.0" level="project" />

@@ -5,7 +5,7 @@
     <groupId>cloud.benchflow.performance-test-orchestrator</groupId>
     <artifactId>performance-test-orchestrator</artifactId>
     <version>0.1.0</version>
-    <!--<username>benchflow-performance-test-orchestrator</username>-->
+    <name>benchflow-performance-test-orchestrator</name>
 
     <packaging>pom</packaging>
     <modules>
@@ -106,7 +106,7 @@
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-forms</artifactId>
                 <version>${dropwizard.version}</version>
-                <!--<returnType>pom</returnType>-->
+                <type>pom</type>
             </dependency>
 
             <!-- https://github.com/tkrille/dropwizard-template-config -->
