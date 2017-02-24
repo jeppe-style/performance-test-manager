@@ -14,22 +14,22 @@
     <session-factory>
 
         <!-- Database connection settings -->
-        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-        <!--<property name="connection.url">jdbc:mysql://localhost:13000/memsql_example?createDatabaseIfNotExist=true</property>-->
-        <!--<property name="connection.username">root</property>-->
-        <!--<property name="connection.password"></property>-->
+        <property username="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <!--<property username="connection.url">jdbc:mysql://localhost:13000/memsql_example?createDatabaseIfNotExist=true</property>-->
+        <!--<property username="connection.username">root</property>-->
+        <!--<property username="connection.password"></property>-->
 
         <!-- SQL dialect -->
-        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property username="dialect">org.hibernate.dialect.MySQLDialect</property>
 
         <!-- Session context -->
-        <property name="hibernate.current_session_context_class">thread</property>
+        <property username="hibernate.current_session_context_class">thread</property>
 
         <!-- Echo all executed SQL to stdout -->
-        <property name="show_sql">true</property>
+        <property username="show_sql">true</property>
 
         <!-- Drop and re-create the database schema on startup -->
-        <!--<property name="hbm2ddl.auto">create</property>-->
+        <!--<property username="hbm2ddl.auto">create</property>-->
 
         <!-- Names the annotated entity class -->
         <mapping class="cloud.benchflow.performancetestorchestrator.db.entities.Experiment"/>

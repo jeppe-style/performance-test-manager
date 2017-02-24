@@ -1,9 +1,9 @@
 package cloud.benchflow.performancetestorchestrator.resources;
 
 import cloud.benchflow.performancetestorchestrator.api.request.SubmitTrialStatusRequest;
-import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDDoesNotExistException;
-import cloud.benchflow.performancetestorchestrator.exceptions.web.InvalidPerformanceTestIDException;
-import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
+import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceExperimentIDDoesNotExistException;
+import cloud.benchflow.performancetestorchestrator.exceptions.web.InvalidPerformanceTrialIDWebException;
+import cloud.benchflow.performancetestorchestrator.services.internal.dao.PerformanceExperimentModelDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,33 +21,34 @@ import javax.ws.rs.core.MediaType;
  */
 public class TrialStatusResource {
 
+    public static String ROOT_PATH = "/performance-experiment-trial/";
+
     private Logger logger = LoggerFactory.getLogger(TrialStatusResource.class.getSimpleName());
 
-    private PerformanceTestModelDAO dao;
+    private PerformanceExperimentModelDAO experimentModelDAO;
 
-    public TrialStatusResource(PerformanceTestModelDAO dao) {
-        this.dao = dao;
+    public TrialStatusResource(PerformanceExperimentModelDAO experimentModelDAO) {
+        this.experimentModelDAO = experimentModelDAO;
     }
 
     @POST
-    @Path("/{performanceTestID}/{performanceExperimentID}/{trialID}/status")
+    @Path("/performance-experiment-trial/{trialID}/status")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void submitTrialStatus(@PathParam("performanceTestID") final String performanceTestID,
-                                  @PathParam("performanceExperimentID") final String performanceExperimentID,
-                                  @PathParam("trialID") final String trialID,
+    public void submitTrialStatus(@PathParam("trialID") final String trialID,
                                   @NotNull @Valid final SubmitTrialStatusRequest statusRequest) {
 
-        logger.info("request received: POST /" + performanceTestID +
-                            "/" + performanceExperimentID +
-                            "/" + trialID +
+        logger.info("request received: POST " + ROOT_PATH + trialID +
                             "/status : " + statusRequest.getStatus().name());
+
+        String performanceExperimentID = trialID.substring(0, trialID.lastIndexOf("."));
+        long trialNumber = Long.parseLong(trialID.substring(trialID.lastIndexOf(".") + 1));
 
         try {
 
-            dao.addTrialStatus(performanceTestID, performanceExperimentID, trialID, statusRequest.getStatus());
+            experimentModelDAO.addTrialStatus(performanceExperimentID, trialNumber, statusRequest.getStatus());
 
-        } catch (PerformanceTestIDDoesNotExistException e) {
-            throw new InvalidPerformanceTestIDException();
+        } catch (PerformanceExperimentIDDoesNotExistException e) {
+            throw new InvalidPerformanceTrialIDWebException();
         }
 
     }

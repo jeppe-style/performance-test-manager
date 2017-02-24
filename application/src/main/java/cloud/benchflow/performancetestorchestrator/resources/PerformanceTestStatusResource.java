@@ -2,9 +2,9 @@ package cloud.benchflow.performancetestorchestrator.resources;
 
 import cloud.benchflow.performancetestorchestrator.api.response.GetPerformanceTestStatusResponse;
 import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDDoesNotExistException;
-import cloud.benchflow.performancetestorchestrator.exceptions.web.InvalidPerformanceTestIDException;
+import cloud.benchflow.performancetestorchestrator.exceptions.web.InvalidPerformanceTestIDWebException;
 import cloud.benchflow.performancetestorchestrator.models.PerformanceTestModel;
-import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
+import cloud.benchflow.performancetestorchestrator.services.internal.dao.PerformanceTestModelDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,32 +20,36 @@ import javax.ws.rs.core.MediaType;
  */
 public class PerformanceTestStatusResource {
 
+    public static String ROOT_PATH = "/performance-test/";
+
     private Logger logger = LoggerFactory.getLogger(PerformanceTestStatusResource.class.getSimpleName());
 
-    private PerformanceTestModelDAO dao;
+    private PerformanceTestModelDAO testModelDAO;
 
-    public PerformanceTestStatusResource(PerformanceTestModelDAO dao) {
-        this.dao = dao;
+    public PerformanceTestStatusResource(PerformanceTestModelDAO testModelDAO) {
+        this.testModelDAO = testModelDAO;
     }
 
     @GET
-    @Path("{performanceTestID}/status")
+    @Path("/performance-test/{performanceTestID}/status")
     @Produces(MediaType.APPLICATION_JSON)
     public GetPerformanceTestStatusResponse getPerformanceTestStatus(@PathParam("performanceTestID") final String performanceTestID) {
 
-        logger.info("request received: GET /" + performanceTestID + "/status");
+        logger.info("request received: GET " + ROOT_PATH + performanceTestID + "/status");
 
         // get the PerformanceTestModel from DAO
 
         PerformanceTestModel performanceTestModel = null;
 
         try {
-            performanceTestModel = dao.getPerformanceTestModel(performanceTestID);
+            performanceTestModel = testModelDAO.getPerformanceTestModel(performanceTestID);
         } catch (PerformanceTestIDDoesNotExistException e) {
-            throw new InvalidPerformanceTestIDException();
+            throw new InvalidPerformanceTestIDWebException();
         }
 
-        return new GetPerformanceTestStatusResponse(performanceTestModel.getPerformanceTestID());
+        // TODO - return the full model
+
+        return new GetPerformanceTestStatusResponse(performanceTestModel.getId());
 
     }
 }

@@ -3,9 +3,9 @@ package cloud.benchflow.performancetestorchestrator.resources;
 import cloud.benchflow.performancetestorchestrator.api.request.ChangePerformanceTestStateRequest;
 import cloud.benchflow.performancetestorchestrator.api.response.ChangePerformanceTestStateResponse;
 import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDDoesNotExistException;
-import cloud.benchflow.performancetestorchestrator.exceptions.web.InvalidPerformanceTestIDException;
+import cloud.benchflow.performancetestorchestrator.exceptions.web.InvalidPerformanceTestIDWebException;
 import cloud.benchflow.performancetestorchestrator.models.PerformanceTestModel;
-import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
+import cloud.benchflow.performancetestorchestrator.services.internal.dao.PerformanceTestModelDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +20,8 @@ import javax.ws.rs.core.MediaType;
  */
 public class PerformanceTestStateResource {
 
+    public static String ROOT_PATH = "/performance-test/";
+
     private Logger logger = LoggerFactory.getLogger(PerformanceTestStateResource.class.getSimpleName());
 
     private PerformanceTestModelDAO dao;
@@ -29,13 +31,13 @@ public class PerformanceTestStateResource {
     }
 
     @PUT
-    @Path("{performanceTestID}/state")
+    @Path("/performance-test/{performanceTestID}/state")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangePerformanceTestStateResponse changePerformanceTestState(@PathParam("performanceTestID") final String performanceTestID,
                                                                          @NotNull @Valid final ChangePerformanceTestStateRequest stateRequest) {
 
-        logger.info("request received: PUT /" + performanceTestID + "/state");
+        logger.info("request received: PUT " + ROOT_PATH + performanceTestID + "/state");
 
         // TODO - handle the actual state change (e.g. on PE Manager)
 
@@ -44,7 +46,7 @@ public class PerformanceTestStateResource {
         try {
             newState = dao.setPerformanceTestState(performanceTestID, stateRequest.getState());
         } catch (PerformanceTestIDDoesNotExistException e) {
-            throw new InvalidPerformanceTestIDException();
+            throw new InvalidPerformanceTestIDWebException();
         }
 
         // return the state as saved

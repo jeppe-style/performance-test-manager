@@ -1,50 +1,79 @@
 package cloud.benchflow.performancetestorchestrator.models;
 
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.*;
+import org.mongodb.morphia.utils.IndexType;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import static cloud.benchflow.performancetestorchestrator.models.PerformanceTestModel.PerformanceTestState.READY;
+import static cloud.benchflow.performancetestorchestrator.constants.BenchFlowConstants.MODEL_ID_DELIMITER;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 18.12.16.
  */
 @Entity
+@Indexes({@Index(options = @IndexOptions(), fields = {@Field(value = "hashedID", type = IndexType.HASHED)})})
 public class PerformanceTestModel {
 
-    // TODO - how to handle concurrency? Only accessed by PerformanceTestModelDAO?
+    public static final String ID_FIELD_NAME = "id";
+    public static final String HASHED_ID_FIELD_NAME = "hashedID";
 
-    public enum PerformanceTestState { READY, RUNNNING, COMPLETED }
+    public enum PerformanceTestState { READY, RUNNING, COMPLETED }
 
     // Annotations for MongoDB + Morphia (http://mongodb.github.io/morphia/1.3/guides/annotations/#entity)
 
+//    userName.testName.testNumber.experimentNumber.trialNumber
+
     @Id
-    private ObjectId id;
-    @Indexed
-    private String performanceTestID;
+    private String id;
+
+    // used for potential sharing in the future
+    private String hashedID;
+
+    @Reference
+    private User user;
+
+    private String name;
+    private long number;
 
     private PerformanceTestState state;
 
-    private Map<String, PerformanceExperimentModel> experiments = new HashMap<>();
+    @Reference
+    private Set<PerformanceExperimentModel> experiments = new HashSet<>();
 
     public PerformanceTestModel() {
         // Empty constructor for MongoDB + Morphia
     }
 
-    public PerformanceTestModel(String performanceTestID) {
+    public PerformanceTestModel(User user, String performanceTestName, long performanceTestNumber) {
 
-        this.performanceTestID = performanceTestID;
+        this.user = user;
+        this.name = performanceTestName;
+        this.number = performanceTestNumber;
+
+        this.id = user.getUsername() + MODEL_ID_DELIMITER + performanceTestName + MODEL_ID_DELIMITER + performanceTestNumber;
+        this.hashedID = this.id;
+
         this.state = READY;
 
     }
 
-    public String getPerformanceTestID() {
-        return performanceTestID;
+    public String getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getNumber() {
+        return number;
     }
 
     public PerformanceTestState getState() {
@@ -55,22 +84,27 @@ public class PerformanceTestModel {
         this.state = state;
     }
 
-    public void addTrialStatus(String performanceExperimentID, String trialID, PerformanceExperimentModel.TrialStatus status) {
+    public void addPerformanceExperimentModel(PerformanceExperimentModel experimentModel) {
 
-        if (!experiments.containsKey(performanceExperimentID))
-            experiments.put(performanceExperimentID, new PerformanceExperimentModel(performanceExperimentID));
-
-        experiments.get(performanceExperimentID)
-                .setTrialStatus(trialID, status);
+        experiments.add(experimentModel);
 
     }
 
-    public PerformanceExperimentModel.TrialStatus getTrialStatus(String performanceExperimentID, String trialID) {
+    public boolean containsPerformanceExperiment(String performanceExperimentID) {
 
-        if (!experiments.containsKey(performanceExperimentID))
-            return null;
+        return experiments.stream().filter(model -> model.getId().equals(performanceExperimentID)).count() != 0;
 
-        return experiments.get(performanceExperimentID).getTrialStatus(trialID);
+    }
+
+    public Set<PerformanceExperimentModel> getPerformanceExperiments() {
+
+       return experiments;
+
+    }
+
+    public long getNextPerformanceExperimentNumber() {
+
+        return experiments.size() + 1;
 
     }
 

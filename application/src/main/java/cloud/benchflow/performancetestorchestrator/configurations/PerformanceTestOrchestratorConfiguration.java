@@ -2,6 +2,7 @@ package cloud.benchflow.performancetestorchestrator.configurations;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
+import io.dropwizard.client.JerseyClientConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -12,45 +13,81 @@ import javax.validation.constraints.NotNull;
  */
 public class PerformanceTestOrchestratorConfiguration extends Configuration {
 
-    // TODO - BenchFlow Environment Configuration
+    // see http://www.dropwizard.io/1.0.6/docs/manual/core.html#configuration
 
-    // TODO - HTTP Client Configuration
+    // BenchFlow Environment Configuration
+    // TODO - is this really needed (https://github.com/tkrille/dropwizard-template-config)
+    @Valid
+    @NotNull
+    private BenchFlowEnvironmentFactory benchFlowEnvironmentFactory = new BenchFlowEnvironmentFactory();
 
-    // TODO - Server Configuration
+    @JsonProperty("benchFlowEnvironment")
+    public BenchFlowEnvironmentFactory getBenchFlowEnvironmentFactory() {
+        return benchFlowEnvironmentFactory;
+    }
 
-    // TODO - Data store Configuration
-//    @Valid
-//    @NotNull
-    private DataStoreConfiguration dataStoreConfiguration = new DataStoreConfiguration();
+    @JsonProperty("benchFlowEnvironment")
+    public void setBenchFlowEnvironmentFactory(BenchFlowEnvironmentFactory benchFlowEnvironmentFactory) {
+        this.benchFlowEnvironmentFactory = benchFlowEnvironmentFactory;
+    }
+
+    // Jersey Client Configuration
+    @Valid
+    @NotNull
+    private JerseyClientConfiguration jerseyClient = new JerseyClientConfiguration();
+
+    @JsonProperty("jerseyClient")
+    public JerseyClientConfiguration getJerseyClientConfiguration() {
+        return jerseyClient;
+    }
+
+    @JsonProperty("jerseyClient")
+    public void setJerseyClient(JerseyClientConfiguration jerseyClient) {
+        this.jerseyClient = jerseyClient;
+    }
+
+    // MongoDB Configuration
+    @Valid
+    @NotNull
+    private MongoDBFactory mongoDBFactory = new MongoDBFactory();
+
+    @JsonProperty("mongoDB")
+    public MongoDBFactory getMongoDBFactory() {
+        return mongoDBFactory;
+    }
+
+    @JsonProperty("mongoDB")
+    public void setMongoDBFactory(MongoDBFactory mongoDBFactory) {
+        this.mongoDBFactory = mongoDBFactory;
+    }
 
     // Performance-Experiment-Manager Service
     @Valid
     @NotNull
-    private PEManagerServiceConfiguration peManagerServiceConfiguration = new PEManagerServiceConfiguration();
+    private PEManagerServiceFactory performanceExperimentManagerServiceFactory = new PEManagerServiceFactory();
+
+    @JsonProperty("performanceExperimentManager")
+    public PEManagerServiceFactory getPerformanceExperimentManagerServiceFactory() {
+        return performanceExperimentManagerServiceFactory;
+    }
+
+    @JsonProperty("performanceExperimentManager")
+    public void setPerformanceExperimentManagerServiceFactory(PEManagerServiceFactory performanceExperimentManagerServiceFactory) {
+        this.performanceExperimentManagerServiceFactory = performanceExperimentManagerServiceFactory;
+    }
 
     // Minio Service
     @Valid
     @NotNull
-    private MinioServiceConfiguration minioServiceConfiguration = new MinioServiceConfiguration();
+    private MinioServiceFactory minioServiceFactory = new MinioServiceFactory();
 
-
-    @JsonProperty("performance-experiment-manager")
-    public PEManagerServiceConfiguration getPeManagerServiceConfiguration() {
-        return peManagerServiceConfiguration;
-    }
-
-    @JsonProperty("performance-experiment-manager")
-    public void setPeManagerServiceConfiguration(PEManagerServiceConfiguration peManagerServiceConfiguration) {
-        this.peManagerServiceConfiguration = peManagerServiceConfiguration;
+    @JsonProperty("minio")
+    public MinioServiceFactory getMinioServiceFactory() {
+        return minioServiceFactory;
     }
 
     @JsonProperty("minio")
-    public MinioServiceConfiguration getMinioServiceConfiguration() {
-        return minioServiceConfiguration;
-    }
-
-    @JsonProperty("minio")
-    public void setMinioServiceConfiguration(MinioServiceConfiguration minioServiceConfiguration) {
-        this.minioServiceConfiguration = minioServiceConfiguration;
+    public void setMinioServiceFactory(MinioServiceFactory minioServiceFactory) {
+        this.minioServiceFactory = minioServiceFactory;
     }
 }

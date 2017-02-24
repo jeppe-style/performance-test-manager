@@ -1,13 +1,17 @@
 package cloud.benchflow.performancetestorchestrator.tasks;
 
-import cloud.benchflow.performancetestorchestrator.definitions.PerformanceTestDefinition;
-import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDAlreadyExistsException;
+import cloud.benchflow.performancetestorchestrator.exceptions.PerformanceTestIDDoesNotExistException;
 import cloud.benchflow.performancetestorchestrator.services.external.MinioService;
 import cloud.benchflow.performancetestorchestrator.services.external.PerformanceExperimentManagerService;
-import cloud.benchflow.performancetestorchestrator.services.internal.PerformanceTestModelDAO;
-import cloud.benchflow.performancetestorchestrator.util.PerformanceExperimentArchiveExtractor;
+import cloud.benchflow.performancetestorchestrator.services.internal.dao.PerformanceExperimentModelDAO;
+import cloud.benchflow.performancetestorchestrator.archive.PerformanceTestArchiveExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -16,51 +20,68 @@ import java.util.zip.ZipInputStream;
  */
 public class RunPerformanceTestTask implements Runnable {
 
+    private static Logger logger = LoggerFactory.getLogger(RunPerformanceTestTask.class.getSimpleName());
+
     private final String performanceTestID;
-    private final ZipInputStream performanceTestArchive;
-    private final PerformanceTestDefinition performanceTestDefinition;
+    private final ZipInputStream testArchive;
 
+    // services
     private final MinioService minioService;
-    private final PerformanceTestModelDAO dao;
     private final PerformanceExperimentManagerService peManagerService;
+    private final PerformanceExperimentModelDAO experimentModelDAO;
 
-    public RunPerformanceTestTask(ZipInputStream performanceTestArchive, MinioService minioService, PerformanceTestModelDAO dao, PerformanceExperimentManagerService peManagerService) throws IOException, PerformanceTestIDAlreadyExistsException {
-
-        this.performanceTestArchive = performanceTestArchive;
+    public RunPerformanceTestTask(String performanceTestID, MinioService minioService, PerformanceExperimentManagerService peManagerService, PerformanceExperimentModelDAO experimentModelDAO, ZipInputStream testArchive) {
+        this.performanceTestID = performanceTestID;
         this.minioService = minioService;
-        this.dao = dao;
         this.peManagerService = peManagerService;
-
-        // get the PerformanceTestID from the archive
-        String definition = PerformanceExperimentArchiveExtractor.extractPerformanceTestDefinition(performanceTestArchive);
-
-        performanceTestDefinition = new PerformanceTestDefinition(definition);
-
-        performanceTestID = performanceTestDefinition.getID();
-
-        // add to DAO (make sure it doesn't already exist)
-        dao.addPerformanceTestModel(performanceTestID);
-
-    }
-
-    public String getPerformanceTestID() {
-        return performanceTestID;
+        this.experimentModelDAO = experimentModelDAO;
+        this.testArchive = testArchive;
     }
 
     @Override
     public void run() {
 
-        // save performanceTestArchive to Minio
-        minioService.savePerformanceTestArchive(performanceTestID, performanceTestArchive);
+        try {
 
-        // TODO - generate the performanceExperimentArchive and save to minio
+            logger.info("running task with ID " + performanceTestID);
 
-        String performanceExperimentID = performanceTestID;
+            // extract contents
+            InputStream definitionInputStream = new ByteArrayInputStream(
+                    PerformanceTestArchiveExtractor.extractPerformanceTestDefinitionString(
+                            testArchive).getBytes());
 
-        minioService.savePerformanceExperimentArchive(performanceTestID, performanceExperimentID, performanceTestArchive);
+            InputStream deploymentDescriptorInputStream = PerformanceTestArchiveExtractor.extractDeploymentDescriptorInputStream(
+                    testArchive);
 
-        // run PE on PEManager
-        peManagerService.runPerformanceExperiment(performanceExperimentID);
+            Map<String, InputStream> bpmnModelInputStreams = PerformanceTestArchiveExtractor.extractBPMNModelInputStreams(
+                    testArchive);
+
+            // save PT archive contents to Minio
+            minioService.savePerformanceTestDefinition(performanceTestID, definitionInputStream);
+            minioService.savePerformanceTestDeploymentDescriptor(performanceTestID, deploymentDescriptorInputStream);
+
+            bpmnModelInputStreams.entrySet()
+                    .forEach(entry -> minioService.savePerformanceTestBPMNModel(performanceTestID,
+                                                                                entry.getKey(),
+                                                                                entry.getValue()));
+
+            // add new performance experiment model
+            String performanceExperimentID = experimentModelDAO.addPerformanceExperiment(performanceTestID);
+
+            // TODO - generate the PE definition
+            InputStream peDefinition = definitionInputStream;
+
+            // save PE defintion to minio
+            minioService.savePerformanceExperimentDefinition(performanceExperimentID,
+                                                             peDefinition);
+
+            // run PE on PEManager
+            peManagerService.runPerformanceExperiment(performanceExperimentID);
+
+        } catch (IOException | PerformanceTestIDDoesNotExistException e) {
+            // TODO - handle these exceptions properly (although should not happen)
+            logger.error(e.toString());
+        }
 
     }
 

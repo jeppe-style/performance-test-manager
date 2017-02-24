@@ -16,7 +16,7 @@ public class PerformanceTestDefinition {
         this.definition = definition;
     }
 
-    public String getID() {
+    public String getName() {
 
         // TODO - parse using DSL
 

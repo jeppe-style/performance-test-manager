@@ -37,7 +37,7 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-forms</artifactId>
-            <type>pom</type>
+            <!--<returnType>pom</returnType>-->
         </dependency>
 
         <dependency>
@@ -48,6 +48,16 @@
         <dependency>
             <groupId>org.mongodb.morphia</groupId>
             <artifactId>morphia</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
 
 
@@ -61,7 +71,7 @@
         <!--<groupId>io.dropwizard</groupId>-->
         <!--<artifactId>dropwizard-forms</artifactId>-->
         <!--<version>${dropwizard.version}</version>-->
-        <!--<type>pom</type>-->
+        <!--<returnType>pom</returnType>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
@@ -111,7 +121,7 @@
         <!--<groupId>org.zeroturnaround</groupId>-->
         <!--<artifactId>zt-zip</artifactId>-->
         <!--<version>${zt-zip.version}</version>-->
-        <!--<type>jar</type>-->
+        <!--<returnType>jar</returnType>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
