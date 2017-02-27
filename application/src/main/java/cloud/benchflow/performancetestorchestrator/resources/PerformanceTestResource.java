@@ -31,11 +31,13 @@ import java.util.zip.ZipInputStream;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 18.12.16.
  */
-public class RunPerformanceTestResource {
 
-    public static String ROOT_PATH = "/performance-test/";
+@Path("/performance-test")
+public class PerformanceTestResource {
 
-    private Logger logger = LoggerFactory.getLogger(RunPerformanceTestResource.class.getSimpleName());
+    public static String ROOT_PATH = "/performance-test";
+
+    private Logger logger = LoggerFactory.getLogger(PerformanceTestResource.class.getSimpleName());
 
     private final ExecutorService taskExecutorService;
     private final MinioService minioService;
@@ -44,7 +46,7 @@ public class RunPerformanceTestResource {
     private final UserDAO userDAO;
     private final PerformanceExperimentManagerService peManagerService;
 
-    public RunPerformanceTestResource(ExecutorService taskExecutorService, MinioService minioService, PerformanceTestModelDAO testModelDAO, PerformanceExperimentModelDAO experimentModelDAO, UserDAO userDAO, PerformanceExperimentManagerService peManagerService) {
+    public PerformanceTestResource(ExecutorService taskExecutorService, MinioService minioService, PerformanceTestModelDAO testModelDAO, PerformanceExperimentModelDAO experimentModelDAO, UserDAO userDAO, PerformanceExperimentManagerService peManagerService) {
         this.taskExecutorService = taskExecutorService;
         this.minioService = minioService;
         this.testModelDAO = testModelDAO;
@@ -54,7 +56,6 @@ public class RunPerformanceTestResource {
     }
 
     @POST
-    @Path("/performance-test")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public RunPerformanceTestResponse runPerformanceTest(@FormDataParam("performanceTest") final InputStream performanceTestArchive) {

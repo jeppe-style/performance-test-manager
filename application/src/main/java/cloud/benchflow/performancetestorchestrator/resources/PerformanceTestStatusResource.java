@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 19.12.16.
  */
+@Path("/performance-test/")
 public class PerformanceTestStatusResource {
 
     public static String ROOT_PATH = "/performance-test/";
@@ -31,7 +32,7 @@ public class PerformanceTestStatusResource {
     }
 
     @GET
-    @Path("/performance-test/{performanceTestID}/status")
+    @Path("{performanceTestID}/status")
     @Produces(MediaType.APPLICATION_JSON)
     public GetPerformanceTestStatusResponse getPerformanceTestStatus(@PathParam("performanceTestID") final String performanceTestID) {
 

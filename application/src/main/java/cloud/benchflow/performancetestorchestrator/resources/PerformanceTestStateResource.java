@@ -18,20 +18,21 @@ import javax.ws.rs.core.MediaType;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 13.02.17.
  */
+@Path("/performance-test/")
 public class PerformanceTestStateResource {
 
     public static String ROOT_PATH = "/performance-test/";
 
     private Logger logger = LoggerFactory.getLogger(PerformanceTestStateResource.class.getSimpleName());
 
-    private PerformanceTestModelDAO dao;
+    private PerformanceTestModelDAO testModelDAO;
 
-    public PerformanceTestStateResource(PerformanceTestModelDAO dao) {
-        this.dao = dao;
+    public PerformanceTestStateResource(PerformanceTestModelDAO testModelDAO) {
+        this.testModelDAO = testModelDAO;
     }
 
     @PUT
-    @Path("/performance-test/{performanceTestID}/state")
+    @Path("{performanceTestID}/state")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangePerformanceTestStateResponse changePerformanceTestState(@PathParam("performanceTestID") final String performanceTestID,
@@ -44,7 +45,7 @@ public class PerformanceTestStateResource {
         // update the state
         PerformanceTestModel.PerformanceTestState newState = null;
         try {
-            newState = dao.setPerformanceTestState(performanceTestID, stateRequest.getState());
+            newState = testModelDAO.setPerformanceTestState(performanceTestID, stateRequest.getState());
         } catch (PerformanceTestIDDoesNotExistException e) {
             throw new InvalidPerformanceTestIDWebException();
         }

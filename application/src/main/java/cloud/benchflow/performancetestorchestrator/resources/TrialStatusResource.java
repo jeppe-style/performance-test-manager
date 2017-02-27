@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 13.02.17.
  */
+@Path("/performance-experiment-trial/")
 public class TrialStatusResource {
 
     public static String ROOT_PATH = "/performance-experiment-trial/";
@@ -32,10 +33,10 @@ public class TrialStatusResource {
     }
 
     @POST
-    @Path("/performance-experiment-trial/{trialID}/status")
+    @Path("{trialID}/status")
     @Consumes(MediaType.APPLICATION_JSON)
     public void submitTrialStatus(@PathParam("trialID") final String trialID,
-                                  @NotNull @Valid final SubmitTrialStatusRequest statusRequest) {
+                                             @NotNull @Valid final SubmitTrialStatusRequest statusRequest) {
 
         logger.info("request received: POST " + ROOT_PATH + trialID +
                             "/status : " + statusRequest.getStatus().name());

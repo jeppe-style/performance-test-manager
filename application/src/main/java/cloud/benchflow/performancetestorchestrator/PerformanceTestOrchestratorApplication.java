@@ -3,7 +3,7 @@ package cloud.benchflow.performancetestorchestrator;
 import cloud.benchflow.performancetestorchestrator.configurations.PerformanceTestOrchestratorConfiguration;
 import cloud.benchflow.performancetestorchestrator.resources.PerformanceTestStateResource;
 import cloud.benchflow.performancetestorchestrator.resources.PerformanceTestStatusResource;
-import cloud.benchflow.performancetestorchestrator.resources.RunPerformanceTestResource;
+import cloud.benchflow.performancetestorchestrator.resources.PerformanceTestResource;
 import cloud.benchflow.performancetestorchestrator.resources.TrialStatusResource;
 import cloud.benchflow.performancetestorchestrator.services.external.MinioService;
 import cloud.benchflow.performancetestorchestrator.services.external.PerformanceExperimentManagerService;
@@ -60,9 +60,9 @@ public class PerformanceTestOrchestratorApplication extends Application<Performa
 
 
         // resources
-        final RunPerformanceTestResource runResource = new RunPerformanceTestResource(performanceTestExecutor,
-                                                                                      minioService, testModelDAO, experimentModelDAO, userDAO,
-                                                                                      experimentManagerService);
+        final PerformanceTestResource runResource = new PerformanceTestResource(performanceTestExecutor,
+                                                                                minioService, testModelDAO, experimentModelDAO, userDAO,
+                                                                                experimentManagerService);
 
         final PerformanceTestStatusResource statusResource = new PerformanceTestStatusResource(testModelDAO);
         final PerformanceTestStateResource stateResource = new PerformanceTestStateResource(testModelDAO);
@@ -78,6 +78,9 @@ public class PerformanceTestOrchestratorApplication extends Application<Performa
         environment.jersey().register(statusResource);
         environment.jersey().register(stateResource);
         environment.jersey().register(trialStatusResource);
+
+        // TODO - we need this??
+//        environment.jersey().register(MultiPartFeature.class);
 
     }
 

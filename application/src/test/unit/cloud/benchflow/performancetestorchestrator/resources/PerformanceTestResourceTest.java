@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 18.12.16.
  */
-public class RunPerformanceTestResourceTest {
+public class PerformanceTestResourceTest {
 
     // Mocks
     private static final ExecutorService executorServiceMock = mock(ExecutorService.class);
@@ -41,7 +41,7 @@ public class RunPerformanceTestResourceTest {
     private UserDAO userDAOMock = Mockito.mock(UserDAO.class);
     private PerformanceExperimentManagerService peManagerServiceMock = Mockito.mock(PerformanceExperimentManagerService.class);
 
-    private RunPerformanceTestResource resource;
+    private PerformanceTestResource resource;
 
 
     @Rule
@@ -50,8 +50,8 @@ public class RunPerformanceTestResourceTest {
     @Before
     public void setUp() throws Exception {
 
-        resource = new RunPerformanceTestResource(executorServiceMock, minioServiceMock, testModelDAOMock,
-                                                  experimentModelDAOMock, userDAOMock, peManagerServiceMock);
+        resource = new PerformanceTestResource(executorServiceMock, minioServiceMock, testModelDAOMock,
+                                               experimentModelDAOMock, userDAOMock, peManagerServiceMock);
 
     }
 

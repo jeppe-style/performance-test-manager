@@ -8,9 +8,10 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
+import org.testcontainers.containers.GenericContainer;
 
-import static cloud.benchflow.performancetestorchestrator.helpers.TestConstants.VALID_PERFORMANCE_TEST_NAME;
 import static cloud.benchflow.performancetestorchestrator.helpers.TestConstants.TEST_USER_NAME;
+import static cloud.benchflow.performancetestorchestrator.helpers.TestConstants.VALID_PERFORMANCE_TEST_NAME;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -26,13 +27,23 @@ public class UserDAOTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
+    @ClassRule
+    public static GenericContainer mongo =
+            new GenericContainer("mongo:3.4.2")
+                    .withExposedPorts(27017);
+
+//    dev-environment/docker-compose.yml
+//    application/src/test/integration/cloud/benchflow/performancetestorchestrator/services/internal/dao/UserDAOTest.java
+
     @Before
     public void setUp() throws Exception {
 
-        // TODO - check mongo client settings
-        testModelDAO = new PerformanceTestModelDAO(new MongoClient());
+        MongoClient  mongoClient = new MongoClient(mongo.getContainerIpAddress(), mongo.getMappedPort(27017));
 
-        userDAO = new UserDAO(new MongoClient(), testModelDAO);
+        // TODO - check minio client settings
+        testModelDAO = new PerformanceTestModelDAO(mongoClient);
+
+        userDAO = new UserDAO(mongoClient, testModelDAO);
 
     }
 
@@ -40,6 +51,13 @@ public class UserDAOTest {
     public void tearDown() throws Exception {
 
         userDAO.removeUser(TEST_USER_NAME);
+
+    }
+
+    @Test
+    public void hello() throws Exception {
+
+        System.out.println("hello");
 
     }
 

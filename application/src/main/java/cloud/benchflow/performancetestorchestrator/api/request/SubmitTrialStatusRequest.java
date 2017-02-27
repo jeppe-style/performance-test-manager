@@ -1,8 +1,10 @@
 package cloud.benchflow.performancetestorchestrator.api.request;
 
-import cloud.benchflow.performancetestorchestrator.models.PerformanceExperimentModel;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
+
+import static cloud.benchflow.performancetestorchestrator.models.PerformanceExperimentModel.TrialStatus;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
@@ -11,13 +13,21 @@ import javax.validation.constraints.NotNull;
 public class SubmitTrialStatusRequest {
 
     @NotNull
-    PerformanceExperimentModel.TrialStatus status;
+    @JsonProperty
+    private TrialStatus status;
 
-    public PerformanceExperimentModel.TrialStatus getStatus() {
+    public SubmitTrialStatusRequest() {
+    }
+
+    public SubmitTrialStatusRequest(TrialStatus status) {
+        this.status = status;
+    }
+
+    public TrialStatus getStatus() {
         return status;
     }
 
-    public void setStatus(PerformanceExperimentModel.TrialStatus status) {
+    public void setStatus(TrialStatus status) {
         this.status = status;
     }
 }

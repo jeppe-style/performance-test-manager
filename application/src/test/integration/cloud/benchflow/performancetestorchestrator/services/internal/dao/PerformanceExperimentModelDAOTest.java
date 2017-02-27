@@ -11,11 +11,12 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
+import org.testcontainers.containers.GenericContainer;
 
+import static cloud.benchflow.performancetestorchestrator.constants.BenchFlowConstants.MODEL_ID_DELIMITER;
 import static cloud.benchflow.performancetestorchestrator.helpers.TestConstants.VALID_PERFORMANCE_TEST_NAME;
 import static cloud.benchflow.performancetestorchestrator.models.PerformanceExperimentModel.TrialStatus.RUNNING;
 import static cloud.benchflow.performancetestorchestrator.models.PerformanceExperimentModel.TrialStatus.SUCCESS;
-import static cloud.benchflow.performancetestorchestrator.constants.BenchFlowConstants.MODEL_ID_DELIMITER;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -24,24 +25,28 @@ import static org.junit.Assert.assertEquals;
  */
 public class PerformanceExperimentModelDAOTest {
 
+    @ClassRule
+    public static GenericContainer mongo =
+            new GenericContainer("mongo:3.4.2")
+                    .withExposedPorts(27017);
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
     private PerformanceTestModelDAO testModelDAO;
     private PerformanceExperimentModelDAO experimentModelDAO;
     private UserDAO userDAO;
-
     private User testUser;
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
     private String performanceTestID;
 
     @Before
     public void setUp() throws Exception {
 
-        testModelDAO = new PerformanceTestModelDAO(new MongoClient());
+        MongoClient  mongoClient = new MongoClient(mongo.getContainerIpAddress(), mongo.getMappedPort(27017));
 
-        experimentModelDAO = new PerformanceExperimentModelDAO(new MongoClient(), testModelDAO);
+        testModelDAO = new PerformanceTestModelDAO(mongoClient);
 
-        userDAO = new UserDAO(new MongoClient(), testModelDAO);
+        experimentModelDAO = new PerformanceExperimentModelDAO(mongoClient, testModelDAO);
+
+        userDAO = new UserDAO(mongoClient, testModelDAO);
 
         testUser = userDAO.addUser(TestConstants.TEST_USER_NAME);
 
@@ -70,7 +75,8 @@ public class PerformanceExperimentModelDAOTest {
 
         // RUNNING
         experimentModelDAO.addTrialStatus(performanceExperimentID, trialNumber, RUNNING);
-        PerformanceExperimentModel.TrialStatus trialStatus = experimentModelDAO.getTrialStatus(performanceExperimentID, trialNumber);
+        PerformanceExperimentModel.TrialStatus trialStatus = experimentModelDAO.getTrialStatus(performanceExperimentID,
+                                                                                               trialNumber);
 
         Assert.assertNotNull(trialStatus);
         assertEquals(RUNNING, trialStatus);
@@ -128,7 +134,8 @@ public class PerformanceExperimentModelDAOTest {
 
             BasicDBObject index = (BasicDBObject) dbObject;
             if (!index.getString("name").equals("_id_")) {
-                assertEquals("hashed", ((DBObject) index.get("key")).get(PerformanceExperimentModel.HASHED_ID_FIELD_NAME));
+                assertEquals("hashed",
+                             ((DBObject) index.get("key")).get(PerformanceExperimentModel.HASHED_ID_FIELD_NAME));
             }
 
         });

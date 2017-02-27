@@ -10,6 +10,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
+import org.testcontainers.containers.GenericContainer;
 
 import java.util.List;
 
@@ -23,8 +24,13 @@ import static org.junit.Assert.assertEquals;
  */
 public class PerformanceTestModelDAOTest {
 
+    @ClassRule
+    public static GenericContainer mongo =
+            new GenericContainer("mongo:3.4.2")
+                    .withExposedPorts(27017);
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
     private PerformanceTestModelDAO testModelDAO;
     private UserDAO userDAO;
     private User testUser;
@@ -32,9 +38,11 @@ public class PerformanceTestModelDAOTest {
     @Before
     public void setUp() throws Exception {
 
-        // TODO - check mongo client settings
-        testModelDAO = new PerformanceTestModelDAO(new MongoClient());
-        userDAO = new UserDAO(new MongoClient(), testModelDAO);
+        MongoClient mongoClient = new MongoClient(mongo.getContainerIpAddress(), mongo.getMappedPort(27017));
+
+        // TODO - check minio client settings
+        testModelDAO = new PerformanceTestModelDAO(mongoClient);
+        userDAO = new UserDAO(mongoClient, testModelDAO);
 
         testUser = userDAO.addUser(TestConstants.TEST_USER_NAME);
 
