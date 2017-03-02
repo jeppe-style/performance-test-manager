@@ -32,8 +32,8 @@
         <!--<property username="hbm2ddl.auto">create</property>-->
 
         <!-- Names the annotated entity class -->
-        <mapping class="cloud.benchflow.performancetestorchestrator.db.entities.Experiment"/>
-        <mapping class="cloud.benchflow.performancetestorchestrator.db.entities.Trial"/>
+        <mapping class="cloud.benchflow.performancetestmanager.db.entities.Experiment"/>
+        <mapping class="cloud.benchflow.performancetestmanager.db.entities.Trial"/>
     </session-factory>
 
 </hibernate-configuration>

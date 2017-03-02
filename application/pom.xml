@@ -65,6 +65,12 @@
             <artifactId>testcontainers</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.palantir.docker.compose</groupId>
+            <artifactId>docker-compose-rule-junit4</artifactId>
+        </dependency>
+
+
 
         <!--<dependency>-->
         <!--<groupId>io.dropwizard</groupId>-->
