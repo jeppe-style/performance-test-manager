@@ -1,4 +1,4 @@
-package cloud.benchflow.performancetestmanager.configurations;
+package cloud.benchflow.performancetestmanager.configurations.factory;
 
 import cloud.benchflow.performancetestmanager.services.external.MinioService;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,6 +1,7 @@
 package cloud.benchflow.performancetestmanager.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
@@ -8,8 +9,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class RunPerformanceTestResponse {
 
-    @JsonProperty("performanceTestID")
+    @NotEmpty
+    @JsonProperty
     private String performanceTestID;
+
+    public RunPerformanceTestResponse() {
+    }
 
     public RunPerformanceTestResponse(String performanceTestID) {
         this.performanceTestID = performanceTestID;

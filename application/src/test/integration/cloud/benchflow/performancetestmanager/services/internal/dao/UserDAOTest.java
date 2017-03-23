@@ -2,13 +2,11 @@ package cloud.benchflow.performancetestmanager.services.internal.dao;
 
 import cloud.benchflow.performancetestmanager.exceptions.UserIDAlreadyExistsException;
 import cloud.benchflow.performancetestmanager.models.User;
+import cloud.benchflow.performancetestmanager.DockerComposeTest;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.palantir.docker.compose.DockerComposeRule;
-import com.palantir.docker.compose.connection.DockerMachine;
-import com.palantir.docker.compose.connection.DockerPort;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 
@@ -20,35 +18,18 @@ import static org.junit.Assert.assertEquals;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 22.02.17.
  */
-public class UserDAOTest {
-
-
-    private PerformanceTestModelDAO testModelDAO;
-    private UserDAO userDAO;
+public class UserDAOTest extends DockerComposeTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
-    private static final DockerMachine dockerMachine = DockerMachine.localMachine()
-            .withAdditionalEnvironmentVariable("MONGO_TAG", "3.4.2")
-            .withAdditionalEnvironmentVariable("MONGO_DATA_VOLUME", "~/DEV/mongo/datadir")
-            .withAdditionalEnvironmentVariable("MINIO_TAG", "RELEASE.2017-02-16T01-47-30Z")
-            .withAdditionalEnvironmentVariable("MINIO_ACCESS_KEY", "minio")
-            .withAdditionalEnvironmentVariable("MINIO_SECRET_KEY", "minio123")
-            .build();
-
-    @ClassRule
-    public static DockerComposeRule composeRule = DockerComposeRule.builder()
-            .file("src/test/resources/docker-compose/docker-compose.yml")
-            .machine(dockerMachine)
-            .build();
+    private PerformanceTestModelDAO testModelDAO;
+    private UserDAO userDAO;
 
     @Before
     public void setUp() throws Exception {
 
-        DockerPort port = composeRule.containers().container("mongo").port(27017);
-
-        MongoClient mongoClient = new MongoClient(port.getIp(), port.getExternalPort());
+        MongoClient mongoClient = new MongoClient(MONGO_CONTAINER.getIp(), MONGO_CONTAINER.getExternalPort());
 
         testModelDAO = new PerformanceTestModelDAO(mongoClient);
 
@@ -83,7 +64,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void addSameUserTwice() throws Exception  {
+    public void addSameUserTwice() throws Exception {
 
         userDAO.addUser(TEST_USER_NAME);
 

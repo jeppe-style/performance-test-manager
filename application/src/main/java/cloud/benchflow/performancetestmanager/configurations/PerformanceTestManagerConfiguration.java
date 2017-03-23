@@ -1,8 +1,10 @@
 package cloud.benchflow.performancetestmanager.configurations;
 
+import cloud.benchflow.performancetestmanager.configurations.factory.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -11,25 +13,9 @@ import javax.validation.constraints.NotNull;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 18.12.16.
  */
-public class PerformanceTestOrchestratorConfiguration extends Configuration {
+public class PerformanceTestManagerConfiguration extends Configuration {
 
     // see http://www.dropwizard.io/1.0.6/docs/manual/core.html#configuration
-
-    // BenchFlow Environment Configuration
-    // TODO - is this really needed (https://github.com/tkrille/dropwizard-template-config)
-    @Valid
-    @NotNull
-    private BenchFlowEnvironmentFactory benchFlowEnvironmentFactory = new BenchFlowEnvironmentFactory();
-
-    @JsonProperty("benchFlowEnvironment")
-    public BenchFlowEnvironmentFactory getBenchFlowEnvironmentFactory() {
-        return benchFlowEnvironmentFactory;
-    }
-
-    @JsonProperty("benchFlowEnvironment")
-    public void setBenchFlowEnvironmentFactory(BenchFlowEnvironmentFactory benchFlowEnvironmentFactory) {
-        this.benchFlowEnvironmentFactory = benchFlowEnvironmentFactory;
-    }
 
     // Jersey Client Configuration
     @Valid
@@ -44,6 +30,31 @@ public class PerformanceTestOrchestratorConfiguration extends Configuration {
     @JsonProperty("jerseyClient")
     public void setJerseyClient(JerseyClientConfiguration jerseyClient) {
         this.jerseyClient = jerseyClient;
+    }
+
+    // Swagger Configuration
+    @Valid
+    @NotNull
+    private final SwaggerBundleConfiguration swagger = new SwaggerBundleConfiguration();
+
+    @JsonProperty("swagger")
+    public SwaggerBundleConfiguration getSwagger() {
+        return swagger;
+    }
+
+    // BenchFlow Environment Configuration
+    @Valid
+    @NotNull
+    private BenchFlowEnvironmentFactory benchFlowEnvironmentFactory = new BenchFlowEnvironmentFactory();
+
+    @JsonProperty("benchFlowEnvironment")
+    public BenchFlowEnvironmentFactory getBenchFlowEnvironmentFactory() {
+        return benchFlowEnvironmentFactory;
+    }
+
+    @JsonProperty("benchFlowEnvironment")
+    public void setBenchFlowEnvironmentFactory(BenchFlowEnvironmentFactory benchFlowEnvironmentFactory) {
+        this.benchFlowEnvironmentFactory = benchFlowEnvironmentFactory;
     }
 
     // MongoDB Configuration
@@ -89,5 +100,20 @@ public class PerformanceTestOrchestratorConfiguration extends Configuration {
     @JsonProperty("minio")
     public void setMinioServiceFactory(MinioServiceFactory minioServiceFactory) {
         this.minioServiceFactory = minioServiceFactory;
+    }
+
+    // Task Executor
+    @Valid
+    @NotNull
+    private TaskExecutorFactory taskExecutorFactory = new TaskExecutorFactory();
+
+    @JsonProperty("taskExecutor")
+    public TaskExecutorFactory getTaskExecutorFactory() {
+        return taskExecutorFactory;
+    }
+
+    @JsonProperty("taskExecutor")
+    public void setTaskExecutorFactory(TaskExecutorFactory taskExecutorFactory) {
+        this.taskExecutorFactory = taskExecutorFactory;
     }
 }

@@ -2,7 +2,7 @@ package cloud.benchflow.performancetestmanager.resources;
 
 import cloud.benchflow.performancetestmanager.api.request.SubmitTrialStatusRequest;
 import cloud.benchflow.performancetestmanager.helpers.TestConstants;
-import cloud.benchflow.performancetestmanager.models.PerformanceExperimentModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowExperimentModel;
 import cloud.benchflow.performancetestmanager.services.internal.dao.PerformanceExperimentModelDAO;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Assert;
@@ -35,7 +35,7 @@ public class TrialStatusEndpointTest {
 
         String target = TrialStatusResource.ROOT_PATH + trialID + "/status";
 
-        SubmitTrialStatusRequest statusRequest = new SubmitTrialStatusRequest(PerformanceExperimentModel.TrialStatus.SUCCESS);
+        SubmitTrialStatusRequest statusRequest = new SubmitTrialStatusRequest(BenchFlowExperimentModel.TrialStatus.SUCCESS);
 
         Response response = resources.client()
                 .target(target)

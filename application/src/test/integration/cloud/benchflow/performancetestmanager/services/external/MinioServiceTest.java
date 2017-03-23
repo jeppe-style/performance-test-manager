@@ -2,13 +2,12 @@ package cloud.benchflow.performancetestmanager.services.external;
 
 import cloud.benchflow.performancetestmanager.archive.TestArchives;
 import cloud.benchflow.performancetestmanager.constants.BenchFlowConstants;
+import cloud.benchflow.performancetestmanager.DockerComposeTest;
 import io.minio.MinioClient;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.testcontainers.containers.GenericContainer;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -22,15 +21,7 @@ import static cloud.benchflow.performancetestmanager.helpers.TestConstants.VALID
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 16.02.17.
  */
-public class MinioServiceTest {
-
-    @ClassRule
-    public static GenericContainer minio =
-            new GenericContainer("minio/minio:RELEASE.2017-02-16T01-47-30Z")
-                    .withExposedPorts(9000)
-                    .withEnv("MINIO_ACCESS_KEY", "minio")
-                    .withEnv("MINIO_SECRET_KEY", "minio123")
-                    .withCommand("server /export");
+public class MinioServiceTest extends DockerComposeTest{
 
     private MinioService minioService;
 
@@ -45,7 +36,7 @@ public class MinioServiceTest {
         // TODO - see how to mock final class MinioClient
         // https://github.com/mockito/mockito/wiki/What%27s-new-in-Mockito-2#mock-the-unmockable-opt-in-mocking-of-final-classesmethods
 
-        String minioEndpoint = "http://" + minio.getContainerIpAddress() + ":" + minio.getMappedPort(9000);
+        String minioEndpoint = "http://" + MINIO_CONTAINER.getIp() + ":" + MINIO_CONTAINER.getExternalPort();
 
         MinioClient minioClient = new MinioClient(minioEndpoint, "minio", "minio123");
 
@@ -154,7 +145,5 @@ public class MinioServiceTest {
         Assert.assertNull(receivedInputStream);
 
     }
-
-
 
 }

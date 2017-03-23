@@ -4,13 +4,13 @@
 #######################################################################
 
 server:
-  returnType: default
+  type: default
   applicationConnectors:
-    - returnType: http
+    - type: http
       port: 8080
       #bindHost: 127.0.0.1 # only bind to loopback
   adminConnectors:
-    - returnType: http
+    - type: http
       port: 8081
       #bindHost: 127.0.0.1 # only bind to loopback
 
@@ -24,7 +24,7 @@ jerseyClient:
   maxConnectionsPerRoute: 1024
   keepAlive: 0ms
   retries: 3
-  userAgent: BenchFlow (PerformanceTestOrchestrator)
+  userAgent: BenchFlow (PerformanceTestManager)
   # jerseyClient additional
   minThreads: 1
   maxThreads: 128
@@ -41,10 +41,17 @@ logging:
 #    cloud.benchflow.experimentsmanager.resources.lifecycle.RunBenchmarkResource: ALL
 #    cloud.benchflow.experimentsmanager.resources.lifecycle.DeployBenchmarkResource: ALL
   appenders:
-    - returnType: console
+    - type: console
       threshold: ALL
       timeZone: UTC
       target: stdout
+
+#######################################################################
+# Libraries
+#######################################################################
+
+swagger:
+  resourcePackage: cloud.benchflow.performancetestmanager.resources
 
 
 #######################################################################
@@ -55,14 +62,18 @@ benchFlowEnvironment:
   config.yml: /app/config.yml
 
 mongoDB:
-  hostname: ${env.MONGO_DB_ADDRESS!"SET_ME"}
+  hostname: ${env.MONGO_DB_ADDRESS!"localhost"}
   port: ${env.MONGO_DB_PORT!"27017"}
-  # TODO - wee want to authenticate?
+  # TODO - we want to authenticate?
 
 performanceExperimentManager:
   address: ${env.PEM_ADDRESS!"SET_ME"}
 
 minio:
-  address: ${env.MINIO_ADDRESS!"SET_ME"}
-  accessKey: ${env.MINIO_ACCESS_KEY!"SET_ME"}
-  secretKey: ${env.MINIO_SECRET_KEY!"SET_ME"}
+  address: ${env.MINIO_ADDRESS!"localhost"}
+  accessKey: ${env.MINIO_ACCESS_KEY!"minio"}
+  secretKey: ${env.MINIO_SECRET_KEY!"minio123"}
+
+taskExecutor:
+  minThreads: 5
+  maxThreads: 15

@@ -10,9 +10,9 @@ import java.util.zip.ZipInputStream;
  */
 public class TestArchives {
 
-    private static final String VALID_TEST_ARCHIVE_FILENAME = "src/test/unit/resources/data/wfms.camunda.valid.zip";
-    private static final String NO_TRIAL_KEY_TEST_ARCHIVE_FILENAME = "src/test/unit/resources/data/wfms.camunda.invalid.no.trial.key.zip";
-    private static final String NO_DEFINITION_TEST_ARCHVIE_FILENAME = "src/test/unit/resources/data/wfms.camunda.invalid.no.definition.zip";
+    private static final String VALID_TEST_ARCHIVE_FILENAME = "src/test/resources/data/wfms.camunda.valid.zip";
+    private static final String NO_TRIAL_KEY_TEST_ARCHIVE_FILENAME = "src/test/resources/data/wfms.camunda.invalid.no.trial.key.zip";
+    private static final String NO_DEFINITION_TEST_ARCHVIE_FILENAME = "src/test/resources/data/wfms.camunda.invalid.no.definition.zip";
 
     public static final int BPMN_MODELS_COUNT = 7;
 
@@ -22,6 +22,10 @@ public class TestArchives {
 
         return new FileInputStream(VALID_TEST_ARCHIVE_FILENAME);
 
+    }
+
+    public static File getValidTestArchiveFile() {
+        return new File(VALID_TEST_ARCHIVE_FILENAME);
     }
 
     public static InputStream getNoTrialKeyTestArchive() throws FileNotFoundException {

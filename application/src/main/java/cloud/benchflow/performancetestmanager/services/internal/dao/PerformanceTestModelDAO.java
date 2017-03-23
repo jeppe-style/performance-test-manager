@@ -1,7 +1,7 @@
 package cloud.benchflow.performancetestmanager.services.internal.dao;
 
 import cloud.benchflow.performancetestmanager.exceptions.PerformanceTestIDDoesNotExistException;
-import cloud.benchflow.performancetestmanager.models.PerformanceTestModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowTestModel;
 import cloud.benchflow.performancetestmanager.models.PerformanceTestNumber;
 import cloud.benchflow.performancetestmanager.models.User;
 import cloud.benchflow.performancetestmanager.constants.BenchFlowConstants;
@@ -32,7 +32,7 @@ public class PerformanceTestModelDAO {
 
         // tell Morphia where to find your classes
         // can be called multiple times with different packages or classes
-        morphia.map(PerformanceTestModel.class);
+        morphia.map(BenchFlowTestModel.class);
         morphia.map(PerformanceTestNumber.class);
         morphia.map(User.class);
 
@@ -57,7 +57,7 @@ public class PerformanceTestModelDAO {
 
         long testNumber = generateTestNumber(performanceTestName, user);
 
-        PerformanceTestModel model = new PerformanceTestModel(user, performanceTestName,
+        BenchFlowTestModel model = new BenchFlowTestModel(user, performanceTestName,
                                                               testNumber);
         datastore.save(model);
 
@@ -105,7 +105,7 @@ public class PerformanceTestModelDAO {
 
         try {
 
-            PerformanceTestModel testModel = getPerformanceTestModel(performanceTestID);
+            BenchFlowTestModel testModel = getPerformanceTestModel(performanceTestID);
 
             testModel.getPerformanceExperiments().forEach(datastore::delete);
 
@@ -126,21 +126,21 @@ public class PerformanceTestModelDAO {
      * @param performanceTestID
      * @return
      */
-    public synchronized PerformanceTestModel getPerformanceTestModel(String performanceTestID) throws PerformanceTestIDDoesNotExistException {
+    public synchronized BenchFlowTestModel getPerformanceTestModel(String performanceTestID) throws PerformanceTestIDDoesNotExistException {
 
         logger.info("getPerformanceTestModel: " + performanceTestID);
 
-        final Query<PerformanceTestModel> performanceTestModelQuery = datastore
-                .createQuery(PerformanceTestModel.class)
-                .field(PerformanceTestModel.ID_FIELD_NAME)
+        final Query<BenchFlowTestModel> performanceTestModelQuery = datastore
+                .createQuery(BenchFlowTestModel.class)
+                .field(BenchFlowTestModel.ID_FIELD_NAME)
                 .equal(performanceTestID);
 
-        PerformanceTestModel performanceTestModel = performanceTestModelQuery.get();
+        BenchFlowTestModel benchFlowTestModel = performanceTestModelQuery.get();
 
-        if (performanceTestModel == null)
+        if (benchFlowTestModel == null)
             throw new PerformanceTestIDDoesNotExistException();
 
-        return performanceTestModel;
+        return benchFlowTestModel;
 
     }
 
@@ -148,14 +148,14 @@ public class PerformanceTestModelDAO {
 
         logger.info("performanceTestModelExists: " + performanceTestID);
 
-        final Query<PerformanceTestModel> performanceTestModelQuery = datastore
-                .createQuery(PerformanceTestModel.class)
-                .field(PerformanceTestModel.ID_FIELD_NAME)
+        final Query<BenchFlowTestModel> performanceTestModelQuery = datastore
+                .createQuery(BenchFlowTestModel.class)
+                .field(BenchFlowTestModel.ID_FIELD_NAME)
                 .equal(performanceTestID);
 
-        PerformanceTestModel performanceTestModel = performanceTestModelQuery.get();
+        BenchFlowTestModel benchFlowTestModel = performanceTestModelQuery.get();
 
-        return performanceTestModel != null;
+        return benchFlowTestModel != null;
     }
 
     /**
@@ -165,12 +165,12 @@ public class PerformanceTestModelDAO {
 
         logger.info("getPerformanceTestModels");
 
-        final Query<PerformanceTestModel> performanceTestModelQuery = datastore
-                .createQuery(PerformanceTestModel.class);
+        final Query<BenchFlowTestModel> performanceTestModelQuery = datastore
+                .createQuery(BenchFlowTestModel.class);
 
         return performanceTestModelQuery.asList()
                 .stream()
-                .map(PerformanceTestModel::getId)
+                .map(BenchFlowTestModel::getId)
                 .collect(Collectors.toList());
     }
 
@@ -178,15 +178,15 @@ public class PerformanceTestModelDAO {
      * @param performanceTestID
      * @param state
      */
-    public synchronized PerformanceTestModel.PerformanceTestState setPerformanceTestState(String performanceTestID, PerformanceTestModel.PerformanceTestState state) throws PerformanceTestIDDoesNotExistException {
+    public synchronized BenchFlowTestModel.PerformanceTestState setPerformanceTestState(String performanceTestID, BenchFlowTestModel.PerformanceTestState state) throws PerformanceTestIDDoesNotExistException {
 
         logger.info("setPerformanceTestState: " + performanceTestID + " : " + state.name());
 
-        final PerformanceTestModel performanceTestModel = getPerformanceTestModel(performanceTestID);
+        final BenchFlowTestModel benchFlowTestModel = getPerformanceTestModel(performanceTestID);
 
-        performanceTestModel.setState(state);
+        benchFlowTestModel.setState(state);
 
-        datastore.save(performanceTestModel);
+        datastore.save(benchFlowTestModel);
 
         return getPerformanceTestModel(performanceTestID).getState();
 
@@ -196,13 +196,13 @@ public class PerformanceTestModelDAO {
      * @param performanceTestID
      * @return
      */
-    public synchronized PerformanceTestModel.PerformanceTestState getPerformanceTestState(String performanceTestID) throws PerformanceTestIDDoesNotExistException {
+    public synchronized BenchFlowTestModel.PerformanceTestState getPerformanceTestState(String performanceTestID) throws PerformanceTestIDDoesNotExistException {
 
         logger.info("getPerformanceTestState: " + performanceTestID);
 
-        final PerformanceTestModel performanceTestModel = getPerformanceTestModel(performanceTestID);
+        final BenchFlowTestModel benchFlowTestModel = getPerformanceTestModel(performanceTestID);
 
-        return performanceTestModel.getState();
+        return benchFlowTestModel.getState();
 
     }
 

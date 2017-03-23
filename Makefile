@@ -1,4 +1,4 @@
-REPONAME = performance-test-orchestrator
+REPONAME = performance-test-manager
 DOCKERIMAGENAME = benchflow/$(REPONAME)
 VERSION = dev
 JAVA_VERSION_FOR_COMPILATION = (^|/)java-8-oracle($|\s)

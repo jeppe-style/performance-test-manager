@@ -1,6 +1,8 @@
 package cloud.benchflow.performancetestmanager.resources;
 
 import cloud.benchflow.performancetestmanager.api.response.RunPerformanceTestResponse;
+import cloud.benchflow.performancetestmanager.archive.PerformanceTestArchiveExtractor;
+import cloud.benchflow.performancetestmanager.constants.BenchFlowConstants;
 import cloud.benchflow.performancetestmanager.definitions.PerformanceTestDefinition;
 import cloud.benchflow.performancetestmanager.exceptions.InvalidTestArchiveException;
 import cloud.benchflow.performancetestmanager.exceptions.UserIDAlreadyExistsException;
@@ -11,8 +13,7 @@ import cloud.benchflow.performancetestmanager.services.internal.dao.PerformanceE
 import cloud.benchflow.performancetestmanager.services.internal.dao.PerformanceTestModelDAO;
 import cloud.benchflow.performancetestmanager.services.internal.dao.UserDAO;
 import cloud.benchflow.performancetestmanager.tasks.RunPerformanceTestTask;
-import cloud.benchflow.performancetestmanager.constants.BenchFlowConstants;
-import cloud.benchflow.performancetestmanager.archive.PerformanceTestArchiveExtractor;
+import io.swagger.annotations.Api;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +33,14 @@ import java.util.zip.ZipInputStream;
  *         created on 18.12.16.
  */
 
-@Path("/performance-test")
-public class PerformanceTestResource {
+@Path("/benchflow-test")
+@Api(value = "benchflow-test")
+public class BenchFlowTestResource {
 
-    public static String ROOT_PATH = "/performance-test";
+    // TODO - decide where to put or encapsulate
+    public static final String ROOT_PATH = "/benchflow-test";
 
-    private Logger logger = LoggerFactory.getLogger(PerformanceTestResource.class.getSimpleName());
+    private Logger logger = LoggerFactory.getLogger(BenchFlowTestResource.class.getSimpleName());
 
     private final ExecutorService taskExecutorService;
     private final MinioService minioService;
@@ -46,7 +49,7 @@ public class PerformanceTestResource {
     private final UserDAO userDAO;
     private final PerformanceExperimentManagerService peManagerService;
 
-    public PerformanceTestResource(ExecutorService taskExecutorService, MinioService minioService, PerformanceTestModelDAO testModelDAO, PerformanceExperimentModelDAO experimentModelDAO, UserDAO userDAO, PerformanceExperimentManagerService peManagerService) {
+    public BenchFlowTestResource(ExecutorService taskExecutorService, MinioService minioService, PerformanceTestModelDAO testModelDAO, PerformanceExperimentModelDAO experimentModelDAO, UserDAO userDAO, PerformanceExperimentManagerService peManagerService) {
         this.taskExecutorService = taskExecutorService;
         this.minioService = minioService;
         this.testModelDAO = testModelDAO;
@@ -58,15 +61,15 @@ public class PerformanceTestResource {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public RunPerformanceTestResponse runPerformanceTest(@FormDataParam("performanceTest") final InputStream performanceTestArchive) {
+    public RunPerformanceTestResponse runBenchFlowTest(@FormDataParam("benchFlowTestBundle") final InputStream benchFlowTestBundle) {
 
         logger.info("request received: " + ROOT_PATH);
 
-        if (performanceTestArchive == null) {
+        if (benchFlowTestBundle == null) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
-        ZipInputStream archiveZipInputStream = new ZipInputStream(performanceTestArchive);
+        ZipInputStream archiveZipInputStream = new ZipInputStream(benchFlowTestBundle);
 
         // TODO - check valid user
         if (!userDAO.userExists(BenchFlowConstants.BENCH_FLOW_USER)) {

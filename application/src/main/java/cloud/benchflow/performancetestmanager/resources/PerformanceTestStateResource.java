@@ -4,8 +4,9 @@ import cloud.benchflow.performancetestmanager.api.request.ChangePerformanceTestS
 import cloud.benchflow.performancetestmanager.api.response.ChangePerformanceTestStateResponse;
 import cloud.benchflow.performancetestmanager.exceptions.PerformanceTestIDDoesNotExistException;
 import cloud.benchflow.performancetestmanager.exceptions.web.InvalidPerformanceTestIDWebException;
-import cloud.benchflow.performancetestmanager.models.PerformanceTestModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowTestModel;
 import cloud.benchflow.performancetestmanager.services.internal.dao.PerformanceTestModelDAO;
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ import javax.ws.rs.core.MediaType;
  *         created on 13.02.17.
  */
 @Path("/performance-test/")
+@Api(value = "performance-test")
 public class PerformanceTestStateResource {
 
     public static String ROOT_PATH = "/performance-test/";
@@ -43,7 +45,7 @@ public class PerformanceTestStateResource {
         // TODO - handle the actual state change (e.g. on PE Manager)
 
         // update the state
-        PerformanceTestModel.PerformanceTestState newState = null;
+        BenchFlowTestModel.PerformanceTestState newState = null;
         try {
             newState = testModelDAO.setPerformanceTestState(performanceTestID, stateRequest.getState());
         } catch (PerformanceTestIDDoesNotExistException e) {

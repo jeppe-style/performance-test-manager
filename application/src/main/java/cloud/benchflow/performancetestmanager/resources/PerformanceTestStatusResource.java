@@ -3,8 +3,9 @@ package cloud.benchflow.performancetestmanager.resources;
 import cloud.benchflow.performancetestmanager.api.response.GetPerformanceTestStatusResponse;
 import cloud.benchflow.performancetestmanager.exceptions.PerformanceTestIDDoesNotExistException;
 import cloud.benchflow.performancetestmanager.exceptions.web.InvalidPerformanceTestIDWebException;
-import cloud.benchflow.performancetestmanager.models.PerformanceTestModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowTestModel;
 import cloud.benchflow.performancetestmanager.services.internal.dao.PerformanceTestModelDAO;
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ import javax.ws.rs.core.MediaType;
  *         created on 19.12.16.
  */
 @Path("/performance-test/")
+@Api(value = "performance-test")
 public class PerformanceTestStatusResource {
 
     public static String ROOT_PATH = "/performance-test/";
@@ -38,19 +40,19 @@ public class PerformanceTestStatusResource {
 
         logger.info("request received: GET " + ROOT_PATH + performanceTestID + "/status");
 
-        // get the PerformanceTestModel from DAO
+        // get the BenchFlowTestModel from DAO
 
-        PerformanceTestModel performanceTestModel = null;
+        BenchFlowTestModel benchFlowTestModel = null;
 
         try {
-            performanceTestModel = testModelDAO.getPerformanceTestModel(performanceTestID);
+            benchFlowTestModel = testModelDAO.getPerformanceTestModel(performanceTestID);
         } catch (PerformanceTestIDDoesNotExistException e) {
             throw new InvalidPerformanceTestIDWebException();
         }
 
         // TODO - return the full model
 
-        return new GetPerformanceTestStatusResponse(performanceTestModel.getId());
+        return new GetPerformanceTestStatusResponse(benchFlowTestModel.getId());
 
     }
 }

@@ -1,7 +1,7 @@
 package cloud.benchflow.performancetestmanager.services.internal.dao;
 
 import cloud.benchflow.performancetestmanager.exceptions.UserIDAlreadyExistsException;
-import cloud.benchflow.performancetestmanager.models.PerformanceTestModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowTestModel;
 import cloud.benchflow.performancetestmanager.models.PerformanceTestNumber;
 import cloud.benchflow.performancetestmanager.models.User;
 import cloud.benchflow.performancetestmanager.constants.BenchFlowConstants;
@@ -46,7 +46,7 @@ public class UserDAO {
 
     public synchronized User addUser(String username) throws UserIDAlreadyExistsException {
 
-        logger.info("removeUser: " + username);
+        logger.info("addUser: " + username);
 
         User user = new User(username);
 
@@ -71,7 +71,7 @@ public class UserDAO {
         if (user != null) {
 
             // first remove the reference to the test models from the user and save to DB
-            List<String> testModelIDs = user.getPerformanceTests().stream().map(PerformanceTestModel::getId).collect(
+            List<String> testModelIDs = user.getPerformanceTests().stream().map(BenchFlowTestModel::getId).collect(
                     Collectors.toList());
 
             user.removeAllPerformanceTestModels();

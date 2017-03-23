@@ -3,7 +3,7 @@ package cloud.benchflow.performancetestmanager.resources;
 import cloud.benchflow.performancetestmanager.api.request.ChangePerformanceTestStateRequest;
 import cloud.benchflow.performancetestmanager.api.response.ChangePerformanceTestStateResponse;
 import cloud.benchflow.performancetestmanager.helpers.TestConstants;
-import cloud.benchflow.performancetestmanager.models.PerformanceTestModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowTestModel;
 import cloud.benchflow.performancetestmanager.services.internal.dao.PerformanceTestModelDAO;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Assert;
@@ -31,7 +31,7 @@ public class PerformanceTestStateEndpointTest {
     @Test
     public void changePerformanceTestState() throws Exception {
 
-        PerformanceTestModel.PerformanceTestState state = PerformanceTestModel.PerformanceTestState.COMPLETED;
+        BenchFlowTestModel.PerformanceTestState state = BenchFlowTestModel.PerformanceTestState.COMPLETED;
         String performanceTestID = TestConstants.VALID_TEST_ID;
 
         Mockito.doReturn(state).when(testModelDAOMock).setPerformanceTestState(performanceTestID, state);

@@ -23,7 +23,7 @@ public class User {
     private String hashUsername;
 
     @Reference
-    private Set<PerformanceTestModel> performanceTests = new HashSet<>();
+    private Set<BenchFlowTestModel> performanceTests = new HashSet<>();
 
     public User() {
         // Empty constructor for MongoDB + Morphia
@@ -39,13 +39,13 @@ public class User {
         return username;
     }
 
-    public boolean addPerformanceTestModel(PerformanceTestModel testModel) {
+    public boolean addPerformanceTestModel(BenchFlowTestModel testModel) {
 
         return performanceTests.add(testModel);
 
     }
 
-    public boolean removePerformanceTestModel(PerformanceTestModel testModel) {
+    public boolean removePerformanceTestModel(BenchFlowTestModel testModel) {
 
         return performanceTests.remove(testModel);
 
@@ -55,7 +55,7 @@ public class User {
         performanceTests.clear();
     }
 
-    public Set<PerformanceTestModel> getPerformanceTests() {
+    public Set<BenchFlowTestModel> getPerformanceTests() {
         return performanceTests;
     }
 

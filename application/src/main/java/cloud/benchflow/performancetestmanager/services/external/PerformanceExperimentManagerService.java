@@ -1,6 +1,6 @@
 package cloud.benchflow.performancetestmanager.services.external;
 
-import cloud.benchflow.performancetestmanager.models.PerformanceExperimentModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowExperimentModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +31,11 @@ public class PerformanceExperimentManagerService {
     private Client httpClient;
     private WebTarget peManagerTarget;
 
-    public PerformanceExperimentManagerService(Client httpClient, String peManagerIP) {
+    public PerformanceExperimentManagerService(Client httpClient, String peManagerAddress) {
 
         this.httpClient = httpClient;
 
-        this.peManagerTarget = httpClient.target("http://" + peManagerIP);
+        this.peManagerTarget = httpClient.target("http://" + peManagerAddress);
     }
 
     public void runPerformanceExperiment(String performanceExperimentID) {
@@ -57,12 +57,12 @@ public class PerformanceExperimentManagerService {
 
     }
 
-    public PerformanceExperimentModel.PerformanceExperimentState abortPerformanceExperiment(String performanceTestID, long performanceExperimentID) {
+    public BenchFlowExperimentModel.BenchFlowExperimentState abortPerformanceExperiment(String performanceTestID, long performanceExperimentID) {
 
         logger.info("abortPerformanceExperiment: " + performanceTestID + "/" + performanceExperimentID);
 
         PerformanceExperimentStateEntity stateEntity = new PerformanceExperimentStateEntity(
-                PerformanceExperimentModel.PerformanceExperimentState.ABORTED);
+                BenchFlowExperimentModel.BenchFlowExperimentState.ABORTED);
 
         Response abortPEResponse = peManagerTarget.path(performanceTestID)
                 .path(String.valueOf(performanceExperimentID))
@@ -103,17 +103,17 @@ public class PerformanceExperimentManagerService {
     // TODO - move this to common library?
     private class PerformanceExperimentStateEntity {
 
-        private PerformanceExperimentModel.PerformanceExperimentState state;
+        private BenchFlowExperimentModel.BenchFlowExperimentState state;
 
-        public PerformanceExperimentStateEntity(PerformanceExperimentModel.PerformanceExperimentState state) {
+        public PerformanceExperimentStateEntity(BenchFlowExperimentModel.BenchFlowExperimentState state) {
             this.state = state;
         }
 
-        public PerformanceExperimentModel.PerformanceExperimentState getState() {
+        public BenchFlowExperimentModel.BenchFlowExperimentState getState() {
             return state;
         }
 
-        public void setState(PerformanceExperimentModel.PerformanceExperimentState state) {
+        public void setState(BenchFlowExperimentModel.BenchFlowExperimentState state) {
             this.state = state;
         }
     }

@@ -2,32 +2,28 @@ package cloud.benchflow.performancetestmanager.services.internal.dao;
 
 import cloud.benchflow.performancetestmanager.exceptions.PerformanceTestIDDoesNotExistException;
 import cloud.benchflow.performancetestmanager.helpers.TestConstants;
-import cloud.benchflow.performancetestmanager.models.PerformanceTestModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowTestModel;
 import cloud.benchflow.performancetestmanager.models.User;
+import cloud.benchflow.performancetestmanager.DockerComposeTest;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
-import org.testcontainers.containers.GenericContainer;
 
 import java.util.List;
 
 import static cloud.benchflow.performancetestmanager.helpers.TestConstants.VALID_PERFORMANCE_TEST_NAME;
-import static cloud.benchflow.performancetestmanager.models.PerformanceTestModel.PerformanceTestState.COMPLETED;
+import static cloud.benchflow.performancetestmanager.models.BenchFlowTestModel.PerformanceTestState.COMPLETED;
 import static org.junit.Assert.assertEquals;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 14.02.17.
  */
-public class PerformanceTestModelDAOTest {
+public class BenchFlowTestModelDAOTest extends DockerComposeTest{
 
-    @ClassRule
-    public static GenericContainer mongo =
-            new GenericContainer("mongo:3.4.2")
-                    .withExposedPorts(27017);
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
@@ -38,9 +34,8 @@ public class PerformanceTestModelDAOTest {
     @Before
     public void setUp() throws Exception {
 
-        MongoClient mongoClient = new MongoClient(mongo.getContainerIpAddress(), mongo.getMappedPort(27017));
+        MongoClient mongoClient = new MongoClient(MONGO_CONTAINER.getIp(), MONGO_CONTAINER.getExternalPort());
 
-        // TODO - check minio client settings
         testModelDAO = new PerformanceTestModelDAO(mongoClient);
         userDAO = new UserDAO(mongoClient, testModelDAO);
 
@@ -60,7 +55,7 @@ public class PerformanceTestModelDAOTest {
 
         String performanceTestID = testModelDAO.addPerformanceTestModel(VALID_PERFORMANCE_TEST_NAME, testUser);
 
-        PerformanceTestModel savedModel = testModelDAO.getPerformanceTestModel(performanceTestID);
+        BenchFlowTestModel savedModel = testModelDAO.getPerformanceTestModel(performanceTestID);
 
         Assert.assertNotNull(savedModel);
 
@@ -113,7 +108,7 @@ public class PerformanceTestModelDAOTest {
 
         String performanceTestIDFirst = testModelDAO.addPerformanceTestModel(VALID_PERFORMANCE_TEST_NAME, testUser);
 
-        PerformanceTestModel model = testModelDAO.getPerformanceTestModel(performanceTestIDFirst);
+        BenchFlowTestModel model = testModelDAO.getPerformanceTestModel(performanceTestIDFirst);
 
         Assert.assertNotNull(model);
 
@@ -135,9 +130,9 @@ public class PerformanceTestModelDAOTest {
 
         String performanceTestID = testModelDAO.addPerformanceTestModel(VALID_PERFORMANCE_TEST_NAME, testUser);
 
-        PerformanceTestModel.PerformanceTestState state = testModelDAO.getPerformanceTestState(performanceTestID);
+        BenchFlowTestModel.PerformanceTestState state = testModelDAO.getPerformanceTestState(performanceTestID);
 
-        assertEquals(PerformanceTestModel.PerformanceTestState.READY, state);
+        assertEquals(BenchFlowTestModel.PerformanceTestState.READY, state);
 
         testModelDAO.setPerformanceTestState(performanceTestID, COMPLETED);
 
@@ -154,7 +149,7 @@ public class PerformanceTestModelDAOTest {
 
         exception.expect(PerformanceTestIDDoesNotExistException.class);
 
-        testModelDAO.setPerformanceTestState("not_valid", PerformanceTestModel.PerformanceTestState.RUNNING);
+        testModelDAO.setPerformanceTestState("not_valid", BenchFlowTestModel.PerformanceTestState.RUNNING);
 
     }
 
@@ -163,13 +158,13 @@ public class PerformanceTestModelDAOTest {
 
         testModelDAO.addPerformanceTestModel(VALID_PERFORMANCE_TEST_NAME, testUser);
 
-        DBCollection collection = testModelDAO.getDataStore().getCollection(PerformanceTestModel.class);
+        DBCollection collection = testModelDAO.getDataStore().getCollection(BenchFlowTestModel.class);
 
         collection.getIndexInfo().forEach(dbObject -> {
 
             BasicDBObject index = (BasicDBObject) dbObject;
             if (!index.getString("name").equals("_id_")) {
-                assertEquals("hashed", ((DBObject) index.get("key")).get(PerformanceTestModel.HASHED_ID_FIELD_NAME));
+                assertEquals("hashed", ((DBObject) index.get("key")).get(BenchFlowTestModel.HASHED_ID_FIELD_NAME));
             }
 
         });

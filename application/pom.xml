@@ -1,24 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>cloud.benchflow.performance-test-orchestrator</groupId>
-        <artifactId>performance-test-orchestrator</artifactId>
+        <groupId>cloud.benchflow.performance-test-manager</groupId>
+        <artifactId>performance-test-manager</artifactId>
         <version>0.1.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>application</artifactId>
-
-    <properties>
-        <!--<jersey.multipart.version>2.19</jersey.multipart.version>-->
-        <!--<minio.version>2.0.0</minio.version>-->
-        <!--<faban.client.version>0.1.0</faban.client.version>-->
-        <!--<snakeyaml.version>1.16</snakeyaml.version>-->
-        <!--<hibernate.version>5.0.7.Final</hibernate.version>-->
-        <!--<mysql.connector.version>5.1.38</mysql.connector.version>-->
-        <!--<zt-zip.version>1.9</zt-zip.version>-->
-        <!--<gson.version>2.6.2</gson.version>-->
-    </properties>
 
     <dependencies>
         <dependency>
@@ -33,11 +22,6 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-forms</artifactId>
-            <type>pom</type>
         </dependency>
 
         <dependency>
@@ -61,13 +45,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
+            <groupId>com.palantir.docker.compose</groupId>
+            <artifactId>docker-compose-rule-junit4</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.palantir.docker.compose</groupId>
-            <artifactId>docker-compose-rule-junit4</artifactId>
+            <groupId>com.smoketurner</groupId>
+            <artifactId>dropwizard-swagger</artifactId>
         </dependency>
 
 

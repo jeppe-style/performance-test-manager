@@ -13,8 +13,8 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import static cloud.benchflow.performancetestmanager.helpers.TestConstants.VALID_PERFORMANCE_TEST_NAME;
-import static cloud.benchflow.performancetestmanager.models.PerformanceTestModel.PerformanceTestState.COMPLETED;
-import static cloud.benchflow.performancetestmanager.models.PerformanceTestModel.PerformanceTestState.RUNNING;
+import static cloud.benchflow.performancetestmanager.models.BenchFlowTestModel.PerformanceTestState.COMPLETED;
+import static cloud.benchflow.performancetestmanager.models.BenchFlowTestModel.PerformanceTestState.RUNNING;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)

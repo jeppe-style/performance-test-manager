@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 18.12.16.
  */
-public class PerformanceTestResourceTest {
+public class BenchFlowTestResourceTest {
 
     // Mocks
     private static final ExecutorService executorServiceMock = mock(ExecutorService.class);
@@ -41,7 +41,7 @@ public class PerformanceTestResourceTest {
     private UserDAO userDAOMock = Mockito.mock(UserDAO.class);
     private PerformanceExperimentManagerService peManagerServiceMock = Mockito.mock(PerformanceExperimentManagerService.class);
 
-    private PerformanceTestResource resource;
+    private BenchFlowTestResource resource;
 
 
     @Rule
@@ -50,7 +50,7 @@ public class PerformanceTestResourceTest {
     @Before
     public void setUp() throws Exception {
 
-        resource = new PerformanceTestResource(executorServiceMock, minioServiceMock, testModelDAOMock,
+        resource = new BenchFlowTestResource(executorServiceMock, minioServiceMock, testModelDAOMock,
                                                experimentModelDAOMock, userDAOMock, peManagerServiceMock);
 
     }
@@ -61,7 +61,7 @@ public class PerformanceTestResourceTest {
         exception.expect(WebApplicationException.class);
         exception.expectMessage(String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
 
-        resource.runPerformanceTest(null);
+        resource.runBenchFlowTest(null);
 
     }
 
@@ -74,7 +74,7 @@ public class PerformanceTestResourceTest {
 
         Mockito.doReturn(expectedTestID).when(testModelDAOMock).addPerformanceTestModel(TestConstants.VALID_PERFORMANCE_TEST_NAME, BenchFlowConstants.BENCH_FLOW_USER);
 
-        RunPerformanceTestResponse response = resource.runPerformanceTest(expArchive);
+        RunPerformanceTestResponse response = resource.runBenchFlowTest(expArchive);
 
         Assert.assertTrue(response.getPerformanceTestID().contains(VALID_PERFORMANCE_TEST_NAME));
 
@@ -89,7 +89,7 @@ public class PerformanceTestResourceTest {
 
         exception.expect(InvalidTestArchiveWebException.class);
 
-        resource.runPerformanceTest(expArchive);
+        resource.runBenchFlowTest(expArchive);
 
     }
 

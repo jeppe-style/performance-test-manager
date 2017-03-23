@@ -4,6 +4,7 @@ import cloud.benchflow.performancetestmanager.api.request.SubmitTrialStatusReque
 import cloud.benchflow.performancetestmanager.exceptions.PerformanceExperimentIDDoesNotExistException;
 import cloud.benchflow.performancetestmanager.exceptions.web.InvalidPerformanceTrialIDWebException;
 import cloud.benchflow.performancetestmanager.services.internal.dao.PerformanceExperimentModelDAO;
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import javax.ws.rs.core.MediaType;
  *         created on 13.02.17.
  */
 @Path("/performance-experiment-trial/")
+@Api(value = "performance-experiment-trial")
 public class TrialStatusResource {
 
     public static String ROOT_PATH = "/performance-experiment-trial/";

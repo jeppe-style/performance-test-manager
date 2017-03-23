@@ -1,5 +1,6 @@
-package cloud.benchflow.performancetestmanager.configurations;
+package cloud.benchflow.performancetestmanager.configurations.factory;
 
+import cloud.benchflow.performancetestmanager.configurations.PerformanceTestManagerConfiguration;
 import cloud.benchflow.performancetestmanager.services.external.PerformanceExperimentManagerService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.JerseyClientBuilder;
@@ -32,7 +33,7 @@ public class PEManagerServiceFactory {
      * @param environment
      * @return
      */
-    public PerformanceExperimentManagerService build(PerformanceTestOrchestratorConfiguration config, Environment environment) {
+    public PerformanceExperimentManagerService build(PerformanceTestManagerConfiguration config, Environment environment) {
 
         Client client = new JerseyClientBuilder(environment)
                 .using(config.getJerseyClientConfiguration())

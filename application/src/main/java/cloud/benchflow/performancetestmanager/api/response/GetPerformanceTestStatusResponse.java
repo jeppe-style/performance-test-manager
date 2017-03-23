@@ -1,8 +1,7 @@
 package cloud.benchflow.performancetestmanager.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
@@ -12,7 +11,7 @@ public class GetPerformanceTestStatusResponse {
 
     // TODO - decide what this should contain
 
-    @NotNull
+    @NotEmpty
     @JsonProperty
     private String performanceTestID;
 

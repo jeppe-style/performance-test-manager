@@ -3,6 +3,7 @@ package cloud.benchflow.performancetestmanager.models;
 import org.mongodb.morphia.annotations.*;
 import org.mongodb.morphia.utils.IndexType;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,31 +15,24 @@ import static cloud.benchflow.performancetestmanager.constants.BenchFlowConstant
  */
 @Entity
 @Indexes({@Index(options = @IndexOptions(), fields = {@Field(value = "hashedID", type = IndexType.HASHED)})})
-public class PerformanceExperimentModel {
-
-    public enum TrialStatus { RUNNING, SUCCESS, FAILURE, ERROR }
-
-    public enum PerformanceExperimentState { READY, RUNNING, ABORTED, COMPLETED }
+public class BenchFlowExperimentModel {
 
     public static final String ID_FIELD_NAME = "id";
     public static final String HASHED_ID_FIELD_NAME = "hashedID";
-
     @Id
     private String id;
-
     // used for potential sharding in the future
     private String hashedID;
-
     private String performanceTestID;
     private long number;
-
+    private Date start = new Date();
+    private Date lastModified = new Date();
     private Map<Long, TrialStatus> trials = new HashMap<>();
-
-    PerformanceExperimentModel(){
+    BenchFlowExperimentModel() {
         // Empty constructor for MongoDB + Morphia
     }
 
-    public PerformanceExperimentModel(String performanceTestID, long experimentNumber) {
+    public BenchFlowExperimentModel(String performanceTestID, long experimentNumber) {
 
         this.performanceTestID = performanceTestID;
         this.number = experimentNumber;
@@ -50,8 +44,21 @@ public class PerformanceExperimentModel {
 
     }
 
+    @PrePersist
+    void prePersist() {
+        lastModified = new Date();
+    }
+
     public String getId() {
         return id;
+    }
+
+    public Date getStart() {
+        return start;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
     }
 
     public void setTrialStatus(long trialNumber, TrialStatus status) {
@@ -65,4 +72,8 @@ public class PerformanceExperimentModel {
         return trials.get(trialNumber);
 
     }
+
+    public enum TrialStatus {RUNNING, SUCCESS, FAILURE, ERROR}
+
+    public enum BenchFlowExperimentState {READY, RUNNING, ABORTED, COMPLETED}
 }

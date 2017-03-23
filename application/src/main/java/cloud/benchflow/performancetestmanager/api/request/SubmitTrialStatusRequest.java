@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
 
-import static cloud.benchflow.performancetestmanager.models.PerformanceExperimentModel.TrialStatus;
+import static cloud.benchflow.performancetestmanager.models.BenchFlowExperimentModel.TrialStatus;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)

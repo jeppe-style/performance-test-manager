@@ -1,6 +1,6 @@
 package cloud.benchflow.performancetestmanager.api.request;
 
-import cloud.benchflow.performancetestmanager.models.PerformanceTestModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowTestModel;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
@@ -13,20 +13,20 @@ public class ChangePerformanceTestStateRequest {
 
     @NotNull
     @JsonProperty
-    PerformanceTestModel.PerformanceTestState state;
+    BenchFlowTestModel.PerformanceTestState state;
 
     public ChangePerformanceTestStateRequest() {
     }
 
-    public ChangePerformanceTestStateRequest(PerformanceTestModel.PerformanceTestState state) {
+    public ChangePerformanceTestStateRequest(BenchFlowTestModel.PerformanceTestState state) {
         this.state = state;
     }
 
-    public PerformanceTestModel.PerformanceTestState getState() {
+    public BenchFlowTestModel.PerformanceTestState getState() {
         return state;
     }
 
-    public void setState(PerformanceTestModel.PerformanceTestState state) {
+    public void setState(BenchFlowTestModel.PerformanceTestState state) {
         this.state = state;
     }
 }

@@ -2,7 +2,7 @@ package cloud.benchflow.performancetestmanager.resources;
 
 import cloud.benchflow.performancetestmanager.api.response.GetPerformanceTestStatusResponse;
 import cloud.benchflow.performancetestmanager.helpers.TestConstants;
-import cloud.benchflow.performancetestmanager.models.PerformanceTestModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowTestModel;
 import cloud.benchflow.performancetestmanager.services.internal.dao.PerformanceTestModelDAO;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Assert;
@@ -31,7 +31,7 @@ public class PerformanceTestStatusEndpointTest {
 
         String performanceTestID = TestConstants.VALID_TEST_ID;
 
-        Mockito.doReturn(new PerformanceTestModel(TestConstants.TEST_USER, TestConstants.VALID_PERFORMANCE_TEST_NAME, TestConstants.VALID_TEST_NUMBER))
+        Mockito.doReturn(new BenchFlowTestModel(TestConstants.TEST_USER, TestConstants.VALID_PERFORMANCE_TEST_NAME, TestConstants.VALID_TEST_NUMBER))
                 .when(testModelDAOMock)
                 .getPerformanceTestModel(performanceTestID);
 

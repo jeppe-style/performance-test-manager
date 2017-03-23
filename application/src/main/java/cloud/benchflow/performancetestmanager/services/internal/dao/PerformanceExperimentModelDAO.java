@@ -2,8 +2,8 @@ package cloud.benchflow.performancetestmanager.services.internal.dao;
 
 import cloud.benchflow.performancetestmanager.exceptions.PerformanceExperimentIDDoesNotExistException;
 import cloud.benchflow.performancetestmanager.exceptions.PerformanceTestIDDoesNotExistException;
-import cloud.benchflow.performancetestmanager.models.PerformanceExperimentModel;
-import cloud.benchflow.performancetestmanager.models.PerformanceTestModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowExperimentModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowTestModel;
 import cloud.benchflow.performancetestmanager.constants.BenchFlowConstants;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
@@ -35,7 +35,7 @@ public class PerformanceExperimentModelDAO {
 
         // tell Morphia where to find your classes
         // can be called multiple times with different packages or classes
-        morphia.map(PerformanceExperimentModel.class);
+        morphia.map(BenchFlowExperimentModel.class);
 
         // create the Datastore
         // TODO - set-up mongo DB (http://mongodb.github.io/mongo-java-driver/2.13/getting-started/quick-tour/)
@@ -54,19 +54,19 @@ public class PerformanceExperimentModelDAO {
 
         logger.info("addPerformanceExperiment: " + performanceTestID);
 
-        final PerformanceTestModel performanceTestModel = testModelDAO.getPerformanceTestModel(performanceTestID);
+        final BenchFlowTestModel benchFlowTestModel = testModelDAO.getPerformanceTestModel(performanceTestID);
 
-        long experimentNumber = performanceTestModel.getNextPerformanceExperimentNumber();
+        long experimentNumber = benchFlowTestModel.getNextPerformanceExperimentNumber();
 
-        PerformanceExperimentModel experimentModel = new PerformanceExperimentModel(performanceTestID,
+        BenchFlowExperimentModel experimentModel = new BenchFlowExperimentModel(performanceTestID,
                                                                                     experimentNumber);
 
         // first save the PE model and then add it to PT Model
         datastore.save(experimentModel);
 
-        performanceTestModel.addPerformanceExperimentModel(experimentModel);
+        benchFlowTestModel.addPerformanceExperimentModel(experimentModel);
 
-        datastore.save(performanceTestModel);
+        datastore.save(benchFlowTestModel);
 
         return experimentModel.getId();
 
@@ -77,16 +77,16 @@ public class PerformanceExperimentModelDAO {
      * @return
      * @throws PerformanceExperimentIDDoesNotExistException
      */
-    private synchronized PerformanceExperimentModel getPerformanceExperiment(String performanceExperimentID) throws PerformanceExperimentIDDoesNotExistException {
+    private synchronized BenchFlowExperimentModel getPerformanceExperiment(String performanceExperimentID) throws PerformanceExperimentIDDoesNotExistException {
 
         logger.info("getPerformanceExperiment: " + performanceExperimentID);
 
-        final Query<PerformanceExperimentModel> performanceTestModelQuery = datastore
-                .createQuery(PerformanceExperimentModel.class)
+        final Query<BenchFlowExperimentModel> performanceTestModelQuery = datastore
+                .createQuery(BenchFlowExperimentModel.class)
                 .field(PERFORMANCE_EXPERIMENT_ID_FIELD_NAME)
                 .equal(performanceExperimentID);
 
-        PerformanceExperimentModel experimentModel = performanceTestModelQuery.get();
+        BenchFlowExperimentModel experimentModel = performanceTestModelQuery.get();
 
         if (experimentModel == null)
             throw new PerformanceExperimentIDDoesNotExistException();
@@ -101,12 +101,12 @@ public class PerformanceExperimentModelDAO {
      * @param status
      * @throws PerformanceTestIDDoesNotExistException
      */
-    public synchronized void addTrialStatus(String performanceExperimentID, long trialNUmber, PerformanceExperimentModel.TrialStatus status) throws PerformanceExperimentIDDoesNotExistException {
+    public synchronized void addTrialStatus(String performanceExperimentID, long trialNUmber, BenchFlowExperimentModel.TrialStatus status) throws PerformanceExperimentIDDoesNotExistException {
 
         logger.info(
                 "addTrialStatus: " + performanceExperimentID + MODEL_ID_DELIMITER + trialNUmber + " : " + status.name());
 
-        final PerformanceExperimentModel experimentModel;
+        final BenchFlowExperimentModel experimentModel;
 
         experimentModel = getPerformanceExperiment(performanceExperimentID);
 
@@ -121,11 +121,11 @@ public class PerformanceExperimentModelDAO {
      * @return
      * @throws PerformanceExperimentIDDoesNotExistException
      */
-    public synchronized PerformanceExperimentModel.TrialStatus getTrialStatus(String performanceExperimentID, long trialNumber) throws PerformanceExperimentIDDoesNotExistException {
+    public synchronized BenchFlowExperimentModel.TrialStatus getTrialStatus(String performanceExperimentID, long trialNumber) throws PerformanceExperimentIDDoesNotExistException {
 
         logger.info("getTrialStatus: " + performanceExperimentID + MODEL_ID_DELIMITER + trialNumber);
 
-        final PerformanceExperimentModel experimentModel = getPerformanceExperiment(performanceExperimentID);
+        final BenchFlowExperimentModel experimentModel = getPerformanceExperiment(performanceExperimentID);
 
         return experimentModel.getTrialStatus(trialNumber);
 

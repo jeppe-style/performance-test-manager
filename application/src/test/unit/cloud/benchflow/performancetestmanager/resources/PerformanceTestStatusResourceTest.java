@@ -4,7 +4,7 @@ import cloud.benchflow.performancetestmanager.api.response.GetPerformanceTestSta
 import cloud.benchflow.performancetestmanager.exceptions.PerformanceTestIDDoesNotExistException;
 import cloud.benchflow.performancetestmanager.exceptions.web.InvalidPerformanceTestIDWebException;
 import cloud.benchflow.performancetestmanager.helpers.TestConstants;
-import cloud.benchflow.performancetestmanager.models.PerformanceTestModel;
+import cloud.benchflow.performancetestmanager.models.BenchFlowTestModel;
 import cloud.benchflow.performancetestmanager.services.internal.dao.PerformanceTestModelDAO;
 import cloud.benchflow.performancetestmanager.constants.BenchFlowConstants;
 import org.junit.Assert;
@@ -58,7 +58,7 @@ public class PerformanceTestStatusResourceTest {
 
         String expectedPerformanceTestID = TestConstants.TEST_USER_NAME + BenchFlowConstants.MODEL_ID_DELIMITER + performanceTestName + BenchFlowConstants.MODEL_ID_DELIMITER + 1;
 
-        doReturn(new PerformanceTestModel(TestConstants.TEST_USER, performanceTestName, 1)).when(
+        doReturn(new BenchFlowTestModel(TestConstants.TEST_USER, performanceTestName, 1)).when(
                 daoMock).getPerformanceTestModel(performanceTestName);
 
         GetPerformanceTestStatusResponse response = statusResource.getPerformanceTestStatus(performanceTestName);

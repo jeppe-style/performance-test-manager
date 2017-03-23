@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
-import static cloud.benchflow.performancetestmanager.models.PerformanceExperimentModel.TrialStatus.SUCCESS;
+import static cloud.benchflow.performancetestmanager.models.BenchFlowExperimentModel.TrialStatus.SUCCESS;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)

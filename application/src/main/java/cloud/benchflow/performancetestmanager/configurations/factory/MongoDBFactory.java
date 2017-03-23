@@ -1,4 +1,4 @@
-package cloud.benchflow.performancetestmanager.configurations;
+package cloud.benchflow.performancetestmanager.configurations.factory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.MongoClient;
