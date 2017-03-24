@@ -2,10 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cloud.benchflow.performance-test-manager</groupId>
-    <artifactId>performance-test-manager</artifactId>
+    <groupId>cloud.benchflow</groupId>
+    <artifactId>benchflow-test-manager</artifactId>
     <version>0.1.0</version>
-    <name>benchflow-performance-test-manager</name>
+    <name>benchflow-test-manager</name>
 
     <packaging>pom</packaging>
     <modules>
@@ -14,9 +14,8 @@
     </modules>
 
     <properties>
-        <project.username>performance-test-manager</project.username>
-        <project.mainclass>cloud.benchflow.performancetestmanager.PerformanceTestManagerApplication
-        </project.mainclass>
+        <project.name>benchflow-test-manager</project.name>
+        <project.mainclass>cloud.benchflow.testmanager.BenchFlowTestManagerApplication</project.mainclass>
         <project.configurationfile>configuration.yml</project.configurationfile>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
@@ -121,7 +120,6 @@
             </dependency>
 
 
-
             <!--<groupId>com.sun.mail</groupId>-->
             <!--<artifactId>javax.mail</artifactId>-->
             <!--<version>${javax.mail.version}</version>-->
@@ -187,7 +185,7 @@
                         </filter>
                     </filters>
                     <outputDirectory>${session.executionRootDirectory}/target</outputDirectory>
-                    <finalName>${project.username}</finalName>
+                    <finalName>${project.name}</finalName>
                 </configuration>
                 <executions>
                     <execution>

@@ -24,7 +24,7 @@ jerseyClient:
   maxConnectionsPerRoute: 1024
   keepAlive: 0ms
   retries: 3
-  userAgent: BenchFlow (PerformanceTestManager)
+  userAgent: BenchFlow (BenchFlowTestManager)
   # jerseyClient additional
   minThreads: 1
   maxThreads: 128
@@ -51,7 +51,7 @@ logging:
 #######################################################################
 
 swagger:
-  resourcePackage: cloud.benchflow.performancetestmanager.resources
+  resourcePackage: cloud.benchflow.testmanager.resources
 
 
 #######################################################################
@@ -66,7 +66,7 @@ mongoDB:
   port: ${env.MONGO_DB_PORT!"27017"}
   # TODO - we want to authenticate?
 
-performanceExperimentManager:
+benchFlowExperimentManager:
   address: ${env.PEM_ADDRESS!"SET_ME"}
 
 minio:
