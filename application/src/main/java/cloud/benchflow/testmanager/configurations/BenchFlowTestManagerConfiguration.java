@@ -24,6 +24,10 @@ public class BenchFlowTestManagerConfiguration extends Configuration {
 
     @JsonProperty("jerseyClient")
     public JerseyClientConfiguration getJerseyClientConfiguration() {
+        // TODO - check if below is needed also when REST interaction changes (no multipart)
+        // needed for multipart client
+        // https://github.com/dropwizard/dropwizard/issues/1013
+        jerseyClient.setChunkedEncodingEnabled(false);
         return jerseyClient;
     }
 

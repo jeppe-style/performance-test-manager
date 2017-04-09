@@ -119,6 +119,12 @@
                 </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>cloud.benchflow</groupId>
+                <artifactId>benchflow-dsl</artifactId>
+                <version>0.1.0</version>
+            </dependency>
+
 
             <!--<groupId>com.sun.mail</groupId>-->
             <!--<artifactId>javax.mail</artifactId>-->

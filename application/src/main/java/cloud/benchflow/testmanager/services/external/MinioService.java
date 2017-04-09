@@ -27,6 +27,20 @@ public class MinioService {
         this.minioClient = minioClient;
     }
 
+    public void initializeBuckets() {
+
+        try {
+            if (!minioClient.bucketExists(BenchFlowConstants.TESTS_BUCKET)) {
+                minioClient.makeBucket(BenchFlowConstants.TESTS_BUCKET);
+            }
+
+        } catch (InvalidBucketNameException | NoSuchAlgorithmException | IOException | InsufficientDataException | InvalidKeyException | NoResponseException | XmlPullParserException | ErrorResponseException | InternalException e) {
+            // TODO - handle exception
+            logger.error("Exception in initializeBuckets ", e);
+        }
+
+    }
+
     public void saveTestDefinition(String testID, InputStream definition) {
 
         logger.info("saveTestDefinition: " + testID);

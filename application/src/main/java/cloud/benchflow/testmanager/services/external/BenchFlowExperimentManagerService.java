@@ -1,6 +1,8 @@
 package cloud.benchflow.testmanager.services.external;
 
 import cloud.benchflow.testmanager.models.BenchFlowExperimentModel;
+import org.glassfish.jersey.media.multipart.*;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,10 +11,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 
 
 /**
- *
  * uses Jersey Client:
  * http://www.dropwizard.io/1.0.6/docs/manual/client.html
  * https://jersey.java.net/documentation/2.22.1/client.html
@@ -29,13 +31,13 @@ public class BenchFlowExperimentManagerService {
     private Logger logger = LoggerFactory.getLogger(BenchFlowExperimentManagerService.class.getSimpleName());
 
     private Client httpClient;
-    private WebTarget peManagerTarget;
+    private WebTarget experimentManagerTarget;
 
-    public BenchFlowExperimentManagerService(Client httpClient, String peManagerAddress) {
+    public BenchFlowExperimentManagerService(Client httpClient, String experimentManagerAddress) {
 
         this.httpClient = httpClient;
 
-        this.peManagerTarget = httpClient.target("http://" + peManagerAddress);
+        this.experimentManagerTarget = httpClient.target("http://" + experimentManagerAddress);
     }
 
     public void runBenchFlowExperiment(String experimentID) {
@@ -44,7 +46,7 @@ public class BenchFlowExperimentManagerService {
 
         RunBenchFlowExperimentRequest requestObject = new RunBenchFlowExperimentRequest(experimentID);
 
-        Response runPEResponse = peManagerTarget.path(RUN_PE_PATH)
+        Response runPEResponse = experimentManagerTarget.path(RUN_PE_PATH)
                 .request()
                 .post(Entity.entity(requestObject, MediaType.APPLICATION_JSON));
 
@@ -64,7 +66,7 @@ public class BenchFlowExperimentManagerService {
         BenchFlowExperimentStateEntity stateEntity = new BenchFlowExperimentStateEntity(
                 BenchFlowExperimentModel.BenchFlowExperimentState.ABORTED);
 
-        Response abortPEResponse = peManagerTarget.path(testID)
+        Response abortPEResponse = experimentManagerTarget.path(testID)
                 .path(String.valueOf(experimentID))
                 .path(STATUS_PE_PATH)
                 .request().post(Entity.entity(stateEntity, MediaType.APPLICATION_JSON));
@@ -79,6 +81,34 @@ public class BenchFlowExperimentManagerService {
         BenchFlowExperimentStateEntity responseStateEntity = abortPEResponse.readEntity(BenchFlowExperimentStateEntity.class);
 
         return responseStateEntity.getState();
+    }
+
+    public void runBenchFlowExperimentDemo(String experimentID, File experimentBundleFile) {
+
+        logger.info("runBenchFlowExperimentDemo: " + experimentID);
+
+        FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("experiment", experimentBundleFile, MediaType.APPLICATION_OCTET_STREAM_TYPE);
+
+        MultiPart multiPart = new FormDataMultiPart();
+        multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+        multiPart.bodyPart(fileDataBodyPart);
+
+        String fileName = experimentBundleFile.getName().split("\\.")[0];
+
+        Response response = experimentManagerTarget
+                .path("/run/" + fileName)
+                .register(MultiPartFeature.class)
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(multiPart, multiPart.getMediaType()));
+
+        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+
+            logger.error("runBenchFlowExperiment: error connecting - " + response.getStatus());
+        }
+
+        logger.info("submitted experiment with response: " + response.toString());
+
+
     }
 
     // TODO - move this to common library?
@@ -117,7 +147,6 @@ public class BenchFlowExperimentManagerService {
             this.state = state;
         }
     }
-
 
 
 }

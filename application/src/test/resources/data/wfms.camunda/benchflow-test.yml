@@ -1,6 +1,6 @@
 sut:
-  username: camunda
-  returnType: WfMS
+  name: camunda
+  type: WfMS
   version: 7.5.0
 
 testName: testNameExample
@@ -23,7 +23,7 @@ drivers:
 - start:
     configuration:
       max90th: 60
-      mix: 
+      mix:
         matrix:
         - [ 20, 20, 20, 20, 20 ]
         - [ 20, 20, 20, 20, 20 ]

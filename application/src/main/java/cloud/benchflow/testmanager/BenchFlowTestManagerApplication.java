@@ -5,8 +5,8 @@ import cloud.benchflow.testmanager.resources.BenchFlowTestResource;
 import cloud.benchflow.testmanager.resources.BenchFlowTestStateResource;
 import cloud.benchflow.testmanager.resources.BenchFlowTestStatusResource;
 import cloud.benchflow.testmanager.resources.TrialStatusResource;
-import cloud.benchflow.testmanager.services.external.MinioService;
 import cloud.benchflow.testmanager.services.external.BenchFlowExperimentManagerService;
+import cloud.benchflow.testmanager.services.external.MinioService;
 import cloud.benchflow.testmanager.services.internal.dao.BenchFlowExperimentModelDAO;
 import cloud.benchflow.testmanager.services.internal.dao.BenchFlowTestModelDAO;
 import cloud.benchflow.testmanager.services.internal.dao.UserDAO;
@@ -67,6 +67,9 @@ public class BenchFlowTestManagerApplication extends Application<BenchFlowTestMa
         MinioService minioService = configuration.getMinioServiceFactory().build();
         BenchFlowExperimentManagerService experimentManagerService = configuration.getBenchFlowExperimentManagerServiceFactory().build(
                 configuration, environment);
+
+        // make sure a bucket exists
+        minioService.initializeBuckets();
 
 
         // resources

@@ -43,7 +43,7 @@ public class RunBenchFlowTestTask implements Runnable {
 
         try {
 
-            logger.info("running task with ID " + testID);
+            logger.info("running test task with ID " + testID);
 
             // extract contents
             InputStream definitionInputStream = new ByteArrayInputStream(
@@ -52,6 +52,8 @@ public class RunBenchFlowTestTask implements Runnable {
 
             InputStream deploymentDescriptorInputStream = BenchFlowTestArchiveExtractor.extractDeploymentDescriptorInputStream(
                     testArchive);
+
+            // TODO - handle different SUT types
 
             Map<String, InputStream> bpmnModelInputStreams = BenchFlowTestArchiveExtractor.extractBPMNModelInputStreams(
                     testArchive);

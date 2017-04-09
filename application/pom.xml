@@ -54,6 +54,10 @@
             <artifactId>dropwizard-swagger</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>cloud.benchflow</groupId>
+            <artifactId>benchflow-dsl</artifactId>
+        </dependency>
 
 
         <!--<dependency>-->

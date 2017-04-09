@@ -8,7 +8,8 @@ import cloud.benchflow.testmanager.models.User;
  */
 public class BenchFlowConstants {
 
-    private static final String YAML_EXTENSION = ".yaml";
+    // TODO - this is necessary for current version of Test Manager
+    private static final String YAML_EXTENSION = ".yml";
 
     // Archive
     public static final String DEPLOYMENT_DESCRIPTOR_NAME = "docker-compose";
