@@ -106,7 +106,7 @@ public class BenchFlowExperimentManagerService {
             logger.error("runBenchFlowExperiment: error connecting - " + response.getStatus());
         }
 
-        logger.info("submitted experiment with response: " + response.toString());
+        logger.info("submitted experiment with response: " + response.readEntity(String.class));
 
 
     }
