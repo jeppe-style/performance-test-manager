@@ -1,13 +1,32 @@
 package cloud.benchflow.testmanager;
 
+import cloud.benchflow.testmanager.api.response.RunBenchFlowTestResponse;
+import cloud.benchflow.testmanager.configurations.BenchFlowTestManagerConfiguration;
+import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.util.Duration;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 2017-04-07
  */
 public class BenchFlowTestManagerDemoTest {
 
-    private static final String DEMO_TEST_ARCHIVE_FILENAME = "src/test/resources/data/ParallelMultiple11.zip";
-
+//    private static final String DEMO_TEST_ARCHIVE_FILENAME = "src/test/resources/data/ParallelMultiple11.zip";
+//
 //    @Rule
 //    public final DropwizardAppRule<BenchFlowTestManagerConfiguration> RULE = new DropwizardAppRule<>(
 //            BenchFlowTestManagerApplication.class,
