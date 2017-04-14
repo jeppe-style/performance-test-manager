@@ -48,7 +48,7 @@ public class BenchFlowTestManagerDemoTest {
 //        Client client = new JerseyClientBuilder(RULE.getEnvironment()).using(configuration).build("test client");
 //
 ////        String benchFlowTestName = "testNameExample";
-////        User user = BenchFlowConstants.BENCH_FLOW_USER;
+////        User user = BenchFlowConstants.BENCHFLOW_USER;
 //
 //        FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("benchFlowTestBundle",
 //                demoFile,

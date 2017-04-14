@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+import static cloud.benchflow.testmanager.constants.BenchFlowConstants.*;
+
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 18.12.16.
@@ -30,8 +32,8 @@ public class MinioService {
     public void initializeBuckets() {
 
         try {
-            if (!minioClient.bucketExists(BenchFlowConstants.TESTS_BUCKET)) {
-                minioClient.makeBucket(BenchFlowConstants.TESTS_BUCKET);
+            if (!minioClient.bucketExists(TESTS_BUCKET)) {
+                minioClient.makeBucket(TESTS_BUCKET);
             }
 
         } catch (InvalidBucketNameException | NoSuchAlgorithmException | IOException | InsufficientDataException | InvalidKeyException | NoResponseException | XmlPullParserException | ErrorResponseException | InternalException e) {
@@ -45,7 +47,7 @@ public class MinioService {
 
         logger.info("saveTestDefinition: " + testID);
 
-        String objectName = minioCompatibleID(testID) + "/" + BenchFlowConstants.TEST_EXPERIMENT_DEFINITION_FILE_NAME;
+        String objectName = minioCompatibleID(testID) + MINIO_ID_DELIMITER + TEST_EXPERIMENT_DEFINITION_FILE_NAME;
 
         putInputStreamObject(definition, objectName);
 
@@ -55,7 +57,7 @@ public class MinioService {
 
         logger.info("getTestDefinition: " + testID);
 
-        String objectName = minioCompatibleID(testID) + "/" + BenchFlowConstants.TEST_EXPERIMENT_DEFINITION_FILE_NAME;
+        String objectName = minioCompatibleID(testID) + MINIO_ID_DELIMITER + TEST_EXPERIMENT_DEFINITION_FILE_NAME;
 
         return getInputStreamObject(objectName);
 
@@ -65,7 +67,7 @@ public class MinioService {
 
         logger.info("removeTestDefinition: " + testID);
 
-        String objectName = minioCompatibleID(testID) + "/" + BenchFlowConstants.TEST_EXPERIMENT_DEFINITION_FILE_NAME;
+        String objectName = minioCompatibleID(testID) + MINIO_ID_DELIMITER + TEST_EXPERIMENT_DEFINITION_FILE_NAME;
 
         removeObject(objectName);
 
@@ -75,7 +77,7 @@ public class MinioService {
 
         logger.info("saveTestDeploymentDescriptor: " + testID);
 
-        String objectName = minioCompatibleID(testID) + "/" + BenchFlowConstants.DEPLOYMENT_DESCRIPTOR_FILE_NAME;
+        String objectName = minioCompatibleID(testID) + MINIO_ID_DELIMITER + DEPLOYMENT_DESCRIPTOR_FILE_NAME;
 
         putInputStreamObject(deploymentDescriptor, objectName);
 
@@ -85,7 +87,7 @@ public class MinioService {
 
         logger.info("getTestDeploymentDescriptor: " + testID);
 
-        String objectName = minioCompatibleID(testID) + "/" + BenchFlowConstants.DEPLOYMENT_DESCRIPTOR_FILE_NAME;
+        String objectName = minioCompatibleID(testID) + MINIO_ID_DELIMITER + DEPLOYMENT_DESCRIPTOR_FILE_NAME;
 
         return getInputStreamObject(objectName);
 
@@ -95,7 +97,7 @@ public class MinioService {
 
         logger.info("removeTestDeploymentDescriptor: " + testID);
 
-        String objectName = minioCompatibleID(testID) + "/" + BenchFlowConstants.DEPLOYMENT_DESCRIPTOR_FILE_NAME;
+        String objectName = minioCompatibleID(testID) + MINIO_ID_DELIMITER + DEPLOYMENT_DESCRIPTOR_FILE_NAME;
 
         removeObject(objectName);
 
@@ -103,9 +105,9 @@ public class MinioService {
 
     public void saveTestBPMNModel(String testID, String modelName, InputStream model) {
 
-        logger.info("saveTestBPMNModel: " + testID + "/" + modelName);
+        logger.info("saveTestBPMNModel: " + testID + MINIO_ID_DELIMITER + modelName);
 
-        String objectName = minioCompatibleID(testID) + "/" + modelName;
+        String objectName = minioCompatibleID(testID) + MINIO_ID_DELIMITER + BPMN_MODELS_FOLDER_NAME + MINIO_ID_DELIMITER + modelName;
 
         putInputStreamObject(model, objectName);
 
@@ -113,9 +115,9 @@ public class MinioService {
 
     public InputStream getTestBPMNModel(String testID, String modelName) {
 
-        logger.info("getTestBPMNModel: " + testID + "/" + modelName);
+        logger.info("getTestBPMNModel: " + testID + MINIO_ID_DELIMITER + modelName);
 
-        String objectName = minioCompatibleID(testID) + "/" + modelName;
+        String objectName = minioCompatibleID(testID) + MINIO_ID_DELIMITER + BPMN_MODELS_FOLDER_NAME + MINIO_ID_DELIMITER + modelName;
 
         return getInputStreamObject(objectName);
 
@@ -123,9 +125,9 @@ public class MinioService {
 
     public void removeTestBPMNModel(String testID, String modelName) {
 
-        logger.info("removeTestBPMNModel: " + testID + "/" + modelName);
+        logger.info("removeTestBPMNModel: " + testID + MINIO_ID_DELIMITER + modelName);
 
-        String objectName = minioCompatibleID(testID) + "/" + modelName;
+        String objectName = minioCompatibleID(testID) + MINIO_ID_DELIMITER + BPMN_MODELS_FOLDER_NAME + MINIO_ID_DELIMITER + modelName;
 
         removeObject(objectName);
 
@@ -135,7 +137,7 @@ public class MinioService {
 
         logger.info("saveExperimentDefinition: " + experimentID);
 
-        String objectName = minioCompatibleID(experimentID) + "/" + BenchFlowConstants.TEST_EXPERIMENT_DEFINITION_FILE_NAME;
+        String objectName = minioCompatibleID(experimentID) + MINIO_ID_DELIMITER + TEST_EXPERIMENT_DEFINITION_FILE_NAME;
 
         putInputStreamObject(definition, objectName);
 
@@ -145,7 +147,7 @@ public class MinioService {
 
         logger.info("getExperimentDefinition: " + experimentID);
 
-        String objectName = minioCompatibleID(experimentID) + "/" + BenchFlowConstants.TEST_EXPERIMENT_DEFINITION_FILE_NAME;
+        String objectName = minioCompatibleID(experimentID) + MINIO_ID_DELIMITER + TEST_EXPERIMENT_DEFINITION_FILE_NAME;
 
         return getInputStreamObject(objectName);
     }
@@ -154,7 +156,7 @@ public class MinioService {
 
         logger.info("removeExperimentDefinition: " + experimentID);
 
-        String objectName = minioCompatibleID(experimentID) + "/" + BenchFlowConstants.TEST_EXPERIMENT_DEFINITION_FILE_NAME;
+        String objectName = minioCompatibleID(experimentID) + MINIO_ID_DELIMITER + TEST_EXPERIMENT_DEFINITION_FILE_NAME;
 
         removeObject(objectName);
     }
@@ -170,7 +172,7 @@ public class MinioService {
 
         try {
 
-            minioClient.putObject(BenchFlowConstants.TESTS_BUCKET,
+            minioClient.putObject(TESTS_BUCKET,
                                   objectName,
                                   inputStream,
                                   inputStream.available(),
@@ -193,7 +195,7 @@ public class MinioService {
 
         try {
 
-            return minioClient.getObject(BenchFlowConstants.TESTS_BUCKET, objectName);
+            return minioClient.getObject(TESTS_BUCKET, objectName);
 
         } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException | IOException | InvalidKeyException | NoResponseException | XmlPullParserException | InternalException | InvalidArgumentException e) {
             // TODO - handle exception
@@ -211,7 +213,7 @@ public class MinioService {
         logger.info("removeObject: " + objectName);
 
         try {
-            minioClient.removeObject(BenchFlowConstants.TESTS_BUCKET, objectName);
+            minioClient.removeObject(TESTS_BUCKET, objectName);
         } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException | IOException | InvalidKeyException | NoResponseException | XmlPullParserException | InternalException e) {
             // TODO - handle exception
             logger.error("Exception in removeObject: " + objectName, e);
@@ -223,7 +225,7 @@ public class MinioService {
     }
 
     private String minioCompatibleID(String id) {
-        return id.replace(".", "/");
+        return id.replace(MODEL_ID_DELIMITER, MINIO_ID_DELIMITER);
     }
 
 

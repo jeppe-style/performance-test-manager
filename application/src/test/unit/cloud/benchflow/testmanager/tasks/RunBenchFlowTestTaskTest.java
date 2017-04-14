@@ -1,6 +1,10 @@
 package cloud.benchflow.testmanager.tasks;
 
+import cloud.benchflow.dsl.BenchFlowDSL;
+import cloud.benchflow.dsl.definition.BenchFlowTest;
+import cloud.benchflow.testmanager.archive.BenchFlowTestArchiveExtractor;
 import cloud.benchflow.testmanager.archive.TestArchives;
+import cloud.benchflow.testmanager.exceptions.InvalidTestArchiveException;
 import cloud.benchflow.testmanager.helpers.TestConstants;
 import cloud.benchflow.testmanager.services.external.MinioService;
 import cloud.benchflow.testmanager.services.external.BenchFlowExperimentManagerService;
@@ -10,6 +14,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.InputStream;
+import java.util.Map;
+import java.util.zip.ZipInputStream;
 
 import static cloud.benchflow.testmanager.constants.BenchFlowConstants.MODEL_ID_DELIMITER;
 import static org.mockito.Mockito.times;
@@ -35,8 +41,27 @@ public class RunBenchFlowTestTaskTest {
 
         testID = TestConstants.TEST_USER_NAME + MODEL_ID_DELIMITER + TestConstants.VALID_BENCHFLOW_TEST_NAME + MODEL_ID_DELIMITER + 1;
 
-        task = new RunBenchFlowTestTask(testID, minioServiceMock,
-                                          peManagerServiceMock, experimentModelDAOMock, TestArchives.getValidTestArchiveZip());
+        ZipInputStream archiveZipInputStream = TestArchives.getValidTestArchiveZip();
+
+        // validate archive
+        // Get the contents of archive and check if valid Test ID
+        String testDefinitionString = BenchFlowTestArchiveExtractor.extractBenchFlowTestDefinitionString(
+                archiveZipInputStream);
+
+        InputStream deploymentDescriptorInputStream = BenchFlowTestArchiveExtractor.extractDeploymentDescriptorInputStream(
+                archiveZipInputStream);
+        Map<String, InputStream> bpmnModelsInputStream = BenchFlowTestArchiveExtractor.extractBPMNModelInputStreams(
+                archiveZipInputStream);
+
+        task = new RunBenchFlowTestTask(
+                testID,
+                minioServiceMock,
+                peManagerServiceMock,
+                experimentModelDAOMock,
+                testDefinitionString,
+                deploymentDescriptorInputStream,
+                bpmnModelsInputStream
+        );
 
     }
 

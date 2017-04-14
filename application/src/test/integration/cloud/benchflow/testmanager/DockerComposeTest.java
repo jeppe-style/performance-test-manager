@@ -29,7 +29,6 @@ public class DockerComposeTest {
 
     private static final DockerMachine dockerMachine = DockerMachine.localMachine()
             .withAdditionalEnvironmentVariable("MONGO_TAG", "3.4.2")
-            // TODO - change the directory
             .withAdditionalEnvironmentVariable("MONGO_DATA_VOLUME", MONGO_DATA_VOLUME_PATH)
             .withAdditionalEnvironmentVariable("MINIO_TAG", "RELEASE.2017-02-16T01-47-30Z")
             .withAdditionalEnvironmentVariable("MINIO_ACCESS_KEY", MINIO_ACCESS_KEY)

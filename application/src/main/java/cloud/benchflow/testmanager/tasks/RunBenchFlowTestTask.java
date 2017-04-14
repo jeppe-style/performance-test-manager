@@ -1,16 +1,20 @@
 package cloud.benchflow.testmanager.tasks;
 
-import cloud.benchflow.testmanager.exceptions.BenchFlowTestIDDoesNotExistException;
-import cloud.benchflow.testmanager.services.external.MinioService;
-import cloud.benchflow.testmanager.services.external.BenchFlowExperimentManagerService;
-import cloud.benchflow.testmanager.services.internal.dao.BenchFlowExperimentModelDAO;
+import cloud.benchflow.dsl.BenchFlowDSL;
+import cloud.benchflow.dsl.definition.BenchFlowExperiment;
 import cloud.benchflow.testmanager.archive.BenchFlowTestArchiveExtractor;
+import cloud.benchflow.testmanager.exceptions.BenchFlowTestIDDoesNotExistException;
+import cloud.benchflow.testmanager.services.external.BenchFlowExperimentManagerService;
+import cloud.benchflow.testmanager.services.external.MinioService;
+import cloud.benchflow.testmanager.services.internal.dao.BenchFlowExperimentModelDAO;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
@@ -23,19 +27,31 @@ public class RunBenchFlowTestTask implements Runnable {
     private static Logger logger = LoggerFactory.getLogger(RunBenchFlowTestTask.class.getSimpleName());
 
     private final String testID;
-    private final ZipInputStream testArchive;
+    private final String testDefinitionYamlString;
+    private final InputStream deploymentDescriptorInputStream;
+    private final Map<String, InputStream> bpmnModelInputStreams;
 
     // services
     private final MinioService minioService;
     private final BenchFlowExperimentManagerService experimentManagerService;
     private final BenchFlowExperimentModelDAO experimentModelDAO;
 
-    public RunBenchFlowTestTask(String testID, MinioService minioService, BenchFlowExperimentManagerService experimentManagerService, BenchFlowExperimentModelDAO experimentModelDAO, ZipInputStream testArchive) {
+    public RunBenchFlowTestTask(
+            String testID,
+            MinioService minioService,
+            BenchFlowExperimentManagerService experimentManagerService,
+            BenchFlowExperimentModelDAO experimentModelDAO,
+            String testDefinitionYamlString,
+            InputStream deploymentDescriptorInputStream,
+            Map<String, InputStream> bpmnModelInputStreams
+    ) {
         this.testID = testID;
         this.minioService = minioService;
         this.experimentManagerService = experimentManagerService;
         this.experimentModelDAO = experimentModelDAO;
-        this.testArchive = testArchive;
+        this.testDefinitionYamlString = testDefinitionYamlString;
+        this.deploymentDescriptorInputStream = deploymentDescriptorInputStream;
+        this.bpmnModelInputStreams = bpmnModelInputStreams;
     }
 
     @Override
@@ -46,17 +62,9 @@ public class RunBenchFlowTestTask implements Runnable {
             logger.info("running test task with ID " + testID);
 
             // extract contents
-            InputStream definitionInputStream = new ByteArrayInputStream(
-                    BenchFlowTestArchiveExtractor.extractBenchFlowTestDefinitionString(
-                            testArchive).getBytes());
-
-            InputStream deploymentDescriptorInputStream = BenchFlowTestArchiveExtractor.extractDeploymentDescriptorInputStream(
-                    testArchive);
+            InputStream definitionInputStream = IOUtils.toInputStream(testDefinitionYamlString, StandardCharsets.UTF_8);
 
             // TODO - handle different SUT types
-
-            Map<String, InputStream> bpmnModelInputStreams = BenchFlowTestArchiveExtractor.extractBPMNModelInputStreams(
-                    testArchive);
 
             // save PT archive contents to Minio
             minioService.saveTestDefinition(testID, definitionInputStream);
@@ -64,23 +72,32 @@ public class RunBenchFlowTestTask implements Runnable {
 
             bpmnModelInputStreams.entrySet()
                     .forEach(entry -> minioService.saveTestBPMNModel(testID,
-                                                                                entry.getKey(),
-                                                                                entry.getValue()));
+                            entry.getKey(),
+                            entry.getValue()));
 
             // add new experiment model
             String experimentID = experimentModelDAO.addExperiment(testID);
 
-            // TODO - generate the PE definition
-            InputStream peDefinition = definitionInputStream;
+            // generate the PE definition
+            BenchFlowExperiment experiment = BenchFlowDSL.experimentFromTestYaml(testDefinitionYamlString).get();
+            InputStream peDefinition = IOUtils.toInputStream(BenchFlowDSL.experimentToYamlString(experiment), StandardCharsets.UTF_8);
 
             // save PE defintion to minio
             minioService.saveExperimentDefinition(experimentID,
-                                                             peDefinition);
+                    peDefinition);
+
+            // save deployment descriptor + models for experiment (one bundle)
+            // TODO - find a solution for how to generalize this
+            minioService.saveTestDeploymentDescriptor(experimentID, deploymentDescriptorInputStream);
+            bpmnModelInputStreams.entrySet()
+                    .forEach(entry -> minioService.saveTestBPMNModel(experimentID,
+                            entry.getKey(),
+                            entry.getValue()));
 
             // run PE on PEManager
             experimentManagerService.runBenchFlowExperiment(experimentID);
 
-        } catch (IOException | BenchFlowTestIDDoesNotExistException e) {
+        } catch (BenchFlowTestIDDoesNotExistException e) {
             // TODO - handle these exceptions properly (although should not happen)
             logger.error(e.toString());
         }

@@ -87,7 +87,7 @@ public class RunBenchFlowDemoTestTask implements Runnable {
 
             // save experiment definition to minio
             minioService.saveExperimentDefinition(experimentID,
-                    IOUtils.toInputStream(experimentDefinitionYAML, "UTF-8"));
+                    IOUtils.toInputStream(experimentDefinitionYAML, StandardCharsets.UTF_8));
 
 
             // create an experiment bundle

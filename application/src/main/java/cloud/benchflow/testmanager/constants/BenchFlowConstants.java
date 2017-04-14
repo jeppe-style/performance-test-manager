@@ -15,6 +15,7 @@ public class BenchFlowConstants {
     public static final String DEPLOYMENT_DESCRIPTOR_NAME = "docker-compose";
     public static final String TEST_EXPERIMENT_DEFINITION_NAME = "benchflow-test";
     public static final String BPMN_MODELS_FOLDER_NAME = "models";
+    public static final String MINIO_ID_DELIMITER = "/";
 
     // Minio
     public static final String TESTS_BUCKET = "tests";
@@ -25,6 +26,6 @@ public class BenchFlowConstants {
 
     // MongoDB
     public static final String DB_NAME = "benchflow-test-manager";
-    public static String MODEL_ID_DELIMITER = ".";
-    public static User BENCH_FLOW_USER = new User("benchflow");
+    public static final String MODEL_ID_DELIMITER = ".";
+    public static final User BENCHFLOW_USER = new User("benchflow");
 }

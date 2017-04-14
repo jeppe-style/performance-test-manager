@@ -26,7 +26,7 @@ public class BenchFlowTestArchiveExtractorTest {
 
         Assert.assertNotNull(ptDefinition);
 
-        Assert.assertTrue(ptDefinition.contains("testName:"));
+        Assert.assertTrue(ptDefinition.contains("version:"));
 
     }
 

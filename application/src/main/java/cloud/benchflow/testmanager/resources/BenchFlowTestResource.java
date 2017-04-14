@@ -5,7 +5,6 @@ import cloud.benchflow.dsl.definition.BenchFlowTest;
 import cloud.benchflow.testmanager.api.response.RunBenchFlowTestResponse;
 import cloud.benchflow.testmanager.archive.BenchFlowTestArchiveExtractor;
 import cloud.benchflow.testmanager.constants.BenchFlowConstants;
-import cloud.benchflow.testmanager.definitions.BenchFlowTestDefinition;
 import cloud.benchflow.testmanager.exceptions.InvalidTestArchiveException;
 import cloud.benchflow.testmanager.exceptions.UserIDAlreadyExistsException;
 import cloud.benchflow.testmanager.exceptions.web.InvalidTestArchiveWebException;
@@ -72,10 +71,10 @@ public class BenchFlowTestResource {
         ZipInputStream archiveZipInputStream = new ZipInputStream(benchFlowTestBundle);
 
         // TODO - check valid user
-        if (!userDAO.userExists(BenchFlowConstants.BENCH_FLOW_USER)) {
+        if (!userDAO.userExists(BenchFlowConstants.BENCHFLOW_USER)) {
 
             try {
-                userDAO.addUser(BenchFlowConstants.BENCH_FLOW_USER.getUsername());
+                userDAO.addUser(BenchFlowConstants.BENCHFLOW_USER.getUsername());
             } catch (UserIDAlreadyExistsException e) {
                 // since we already checked that the user doesn't exist it cannot happen
                 throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
@@ -85,14 +84,37 @@ public class BenchFlowTestResource {
         try {
 
             // validate archive
-            String testName = validatePTArchive(archiveZipInputStream);
+            // Get the contents of archive and check if valid Test ID
+            String testDefinitionString = BenchFlowTestArchiveExtractor.extractBenchFlowTestDefinitionString(
+                    archiveZipInputStream);
+
+            if (testDefinitionString == null)
+                throw new InvalidTestArchiveException();
+
+            BenchFlowTest benchFlowTest = BenchFlowDSL.testFromYaml(testDefinitionString).get();
+
+            InputStream deploymentDescriptorInputStream = BenchFlowTestArchiveExtractor.extractDeploymentDescriptorInputStream(
+                    archiveZipInputStream);
+            Map<String, InputStream> bpmnModelsInputStream = BenchFlowTestArchiveExtractor.extractBPMNModelInputStreams(
+                    archiveZipInputStream);
+
+            if (deploymentDescriptorInputStream == null || bpmnModelsInputStream.size() == 0) {
+                throw new InvalidTestArchiveException();
+            }
 
             // save new experiment
-            String testID = testModelDAO.addTestModel(testName, BenchFlowConstants.BENCH_FLOW_USER);
+            String testID = testModelDAO.addTestModel(benchFlowTest.name(), BenchFlowConstants.BENCHFLOW_USER);
 
             // create new task and run it
-            RunBenchFlowTestTask task = new RunBenchFlowTestTask(testID, minioService,
-                    peManagerService, experimentModelDAO, archiveZipInputStream);
+            RunBenchFlowTestTask task = new RunBenchFlowTestTask(
+                    testID,
+                    minioService,
+                    peManagerService,
+                    experimentModelDAO,
+                    testDefinitionString,
+                    deploymentDescriptorInputStream,
+                    bpmnModelsInputStream
+            );
 
 
             // TODO - should go into a stateless queue (so that we can recover)
@@ -124,10 +146,10 @@ public class BenchFlowTestResource {
         ZipInputStream archiveZipInputStream = new ZipInputStream(benchFlowTestBundle);
 
         // TODO - check valid user
-        if (!userDAO.userExists(BenchFlowConstants.BENCH_FLOW_USER)) {
+        if (!userDAO.userExists(BenchFlowConstants.BENCHFLOW_USER)) {
 
             try {
-                userDAO.addUser(BenchFlowConstants.BENCH_FLOW_USER.getUsername());
+                userDAO.addUser(BenchFlowConstants.BENCHFLOW_USER.getUsername());
             } catch (UserIDAlreadyExistsException e) {
                 // since we already checked that the user doesn't exist it cannot happen
                 throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
@@ -164,7 +186,7 @@ public class BenchFlowTestResource {
 
 
             // save new experiment
-            String testID = testModelDAO.addTestModel(testName, BenchFlowConstants.BENCH_FLOW_USER);
+            String testID = testModelDAO.addTestModel(testName, BenchFlowConstants.BENCHFLOW_USER);
 
             // create new task and run it
             RunBenchFlowDemoTestTask task = new RunBenchFlowDemoTestTask(
@@ -195,14 +217,13 @@ public class BenchFlowTestResource {
         // TODO - validate benchFlowTestArchive content in detail
 
         // Get the contents of archive and check if valid Test ID
-        String ptDefinitionString = BenchFlowTestArchiveExtractor.extractBenchFlowTestDefinitionString(
+        String testDefinitionString = BenchFlowTestArchiveExtractor.extractBenchFlowTestDefinitionString(
                 archiveZipInputStream);
 
-        if (ptDefinitionString == null)
+        if (testDefinitionString == null)
             throw new InvalidTestArchiveException();
 
-        // TODO - get real definition
-        BenchFlowTestDefinition ptDefinition = new BenchFlowTestDefinition(ptDefinitionString);
+        BenchFlowTest benchFlowTest = BenchFlowDSL.testFromYaml(testDefinitionString).get();
 
         InputStream deploymentDescriptorInputStream = BenchFlowTestArchiveExtractor.extractDeploymentDescriptorInputStream(
                 archiveZipInputStream);
@@ -213,7 +234,7 @@ public class BenchFlowTestResource {
             throw new InvalidTestArchiveException();
         }
 
-        return ptDefinition.getName();
+        return benchFlowTest.name();
     }
 
 

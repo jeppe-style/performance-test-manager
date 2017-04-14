@@ -43,6 +43,8 @@ public class TrialStatusResource {
         String experimentID = trialID.substring(0, trialID.lastIndexOf("."));
         long trialNumber = Long.parseLong(trialID.substring(trialID.lastIndexOf(".") + 1));
 
+        // TODO - check that all trials have completed here?
+
         try {
 
             experimentModelDAO.addTrialStatus(experimentID, trialNumber, statusRequest.getStatus());

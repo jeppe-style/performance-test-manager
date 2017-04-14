@@ -35,11 +35,11 @@ public class BenchFlowTestResourceTest {
 
     // Mocks
     private static final ExecutorService executorServiceMock = mock(ExecutorService.class);
-    private MinioService minioServiceMock = Mockito.mock(MinioService.class);
-    private BenchFlowTestModelDAO testModelDAOMock = Mockito.mock(BenchFlowTestModelDAO.class);
-    private BenchFlowExperimentModelDAO experimentModelDAOMock = Mockito.mock(BenchFlowExperimentModelDAO.class);
-    private UserDAO userDAOMock = Mockito.mock(UserDAO.class);
-    private BenchFlowExperimentManagerService peManagerServiceMock = Mockito.mock(BenchFlowExperimentManagerService.class);
+    private MinioService minioServiceMock = mock(MinioService.class);
+    private BenchFlowTestModelDAO testModelDAOMock = mock(BenchFlowTestModelDAO.class);
+    private BenchFlowExperimentModelDAO experimentModelDAOMock = mock(BenchFlowExperimentModelDAO.class);
+    private UserDAO userDAOMock = mock(UserDAO.class);
+    private BenchFlowExperimentManagerService peManagerServiceMock = mock(BenchFlowExperimentManagerService.class);
 
     private BenchFlowTestResource resource;
 
@@ -72,7 +72,7 @@ public class BenchFlowTestResourceTest {
 
         String expectedTestID = TestConstants.TEST_USER_NAME + MODEL_ID_DELIMITER + TestConstants.VALID_BENCHFLOW_TEST_NAME + MODEL_ID_DELIMITER + 1;
 
-        Mockito.doReturn(expectedTestID).when(testModelDAOMock).addTestModel(TestConstants.VALID_BENCHFLOW_TEST_NAME, BenchFlowConstants.BENCH_FLOW_USER);
+        Mockito.doReturn(expectedTestID).when(testModelDAOMock).addTestModel(TestConstants.VALID_BENCHFLOW_TEST_NAME, BenchFlowConstants.BENCHFLOW_USER);
 
         RunBenchFlowTestResponse response = resource.runBenchFlowTest(expArchive);
 

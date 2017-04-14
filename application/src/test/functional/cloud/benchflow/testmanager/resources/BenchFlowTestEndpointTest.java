@@ -53,7 +53,7 @@ public class BenchFlowTestEndpointTest {
     public void runValidBenchFlowTest() throws Exception {
 
         String benchFlowTestName = "testNameExample";
-        User user = BenchFlowConstants.BENCH_FLOW_USER;
+        User user = BenchFlowConstants.BENCHFLOW_USER;
 
         Mockito.doReturn(
                 user.getUsername() + BenchFlowConstants.MODEL_ID_DELIMITER + benchFlowTestName + BenchFlowConstants.MODEL_ID_DELIMITER + 1).when(

@@ -13,6 +13,7 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.util.Duration;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
@@ -51,11 +52,13 @@ public class BenchFlowTestManagerApplicationTest extends DockerComposeTest {
         // https://github.com/dropwizard/dropwizard/issues/1013
         JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setChunkedEncodingEnabled(false);
+        // needed because parsing testYaml takes more than default time
+        configuration.setTimeout(Duration.milliseconds(1000));
 
         Client client = new JerseyClientBuilder(RULE.getEnvironment()).using(configuration).build("test client");
 
         String benchFlowTestName = "testNameExample";
-        User user = BenchFlowConstants.BENCH_FLOW_USER;
+        User user = BenchFlowConstants.BENCHFLOW_USER;
 
         FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("benchFlowTestBundle",
                                                                  TestArchives.getValidTestArchiveFile(),
@@ -77,8 +80,6 @@ public class BenchFlowTestManagerApplicationTest extends DockerComposeTest {
 
         Assert.assertNotNull(testResponse);
         Assert.assertTrue(testResponse.getTestID().contains(benchFlowTestName));
-
-        // TODO - check that experiment is scheduled
 
     }
 

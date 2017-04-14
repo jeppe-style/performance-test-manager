@@ -30,12 +30,9 @@ public class BenchFlowExperimentManagerService {
 
     private Logger logger = LoggerFactory.getLogger(BenchFlowExperimentManagerService.class.getSimpleName());
 
-    private Client httpClient;
     private WebTarget experimentManagerTarget;
 
     public BenchFlowExperimentManagerService(Client httpClient, String experimentManagerAddress) {
-
-        this.httpClient = httpClient;
 
         this.experimentManagerTarget = httpClient.target("http://" + experimentManagerAddress);
     }
