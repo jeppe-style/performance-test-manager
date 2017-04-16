@@ -1,14 +1,15 @@
 package cloud.benchflow.testmanager.services.external;
 
-import cloud.benchflow.testmanager.constants.BenchFlowConstants;
 import io.minio.MinioClient;
 import io.minio.errors.*;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -83,6 +84,17 @@ public class MinioService {
 
     }
 
+    public void copyDeploymentDescriptorForExperiment(String testID, String experimentID) {
+
+        logger.info("copyDeploymentDescriptorForExperiment: from:" + testID + " to:" + experimentID);
+
+        String testObjectID = minioCompatibleID(testID) + MINIO_ID_DELIMITER + DEPLOYMENT_DESCRIPTOR_FILE_NAME;
+        String experimentObjectID = minioCompatibleID(experimentID) + MINIO_ID_DELIMITER + DEPLOYMENT_DESCRIPTOR_FILE_NAME;
+
+        copyObject(testObjectID, experimentObjectID);
+
+    }
+
     public InputStream getTestDeploymentDescriptor(String testID) {
 
         logger.info("getTestDeploymentDescriptor: " + testID);
@@ -110,6 +122,17 @@ public class MinioService {
         String objectName = minioCompatibleID(testID) + MINIO_ID_DELIMITER + BPMN_MODELS_FOLDER_NAME + MINIO_ID_DELIMITER + modelName;
 
         putInputStreamObject(model, objectName);
+
+    }
+
+    public void copyBPMNModelForExperiment(String testID, String experimentID, String modelName) {
+
+        logger.info("copyBPMNModelForExperiment: from:" + testID + " to:" + experimentID + " model:" + modelName);
+
+        String testObjectID = minioCompatibleID(testID) + MINIO_ID_DELIMITER + BPMN_MODELS_FOLDER_NAME + MINIO_ID_DELIMITER + modelName;
+        String experimentObjectID = minioCompatibleID(experimentID) + MINIO_ID_DELIMITER + BPMN_MODELS_FOLDER_NAME + MINIO_ID_DELIMITER + modelName;
+
+        copyObject(testObjectID, experimentObjectID);
 
     }
 
@@ -162,7 +185,6 @@ public class MinioService {
     }
 
     /**
-     *
      * @param inputStream
      * @param objectName
      */
@@ -173,10 +195,10 @@ public class MinioService {
         try {
 
             minioClient.putObject(TESTS_BUCKET,
-                                  objectName,
-                                  inputStream,
-                                  inputStream.available(),
-                                  CONTENT_TYPE);
+                    objectName,
+                    inputStream,
+                    inputStream.available(),
+                    CONTENT_TYPE);
 
         } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException | IOException | NoResponseException | InvalidKeyException | ErrorResponseException | XmlPullParserException | InvalidArgumentException | InternalException e) {
             // TODO - handle exception
@@ -185,8 +207,8 @@ public class MinioService {
     }
 
     /**
-     *
      * @param objectName
+     *
      * @return
      */
     private InputStream getInputStreamObject(String objectName) {
@@ -204,7 +226,7 @@ public class MinioService {
 
         } catch (ErrorResponseException e) {
            /* happens if the object doesn't exist*/
-           return null;
+            return null;
         }
     }
 
@@ -221,6 +243,31 @@ public class MinioService {
             /* happens if the object to remove doesn't exist, do nothing */
         }
 
+
+    }
+
+    private void copyObject(String fromObjectName, String toObjectName) {
+
+        logger.info("copyObject: from:" + fromObjectName + " to:" + toObjectName);
+
+        try {
+            // the provided copyObject does not seem to work, so we do this workaround
+            // minioClient.copyObject(TESTS_BUCKET, fromObjectName, TESTS_BUCKET, toObjectName);
+
+            // convert to buffered input stream as the type minio returns cannot be put
+            String temp = IOUtils.toString(minioClient.getObject(TESTS_BUCKET, fromObjectName), StandardCharsets.UTF_8);
+            InputStream tempInputStream = IOUtils.toInputStream(temp, StandardCharsets.UTF_8);
+
+            minioClient.putObject(TESTS_BUCKET,
+                    toObjectName,
+                    tempInputStream,
+                    tempInputStream.available(),
+                    CONTENT_TYPE);
+
+        } catch (InvalidKeyException | InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException | NoResponseException | ErrorResponseException | InternalException | IOException | XmlPullParserException | InvalidArgumentException e) {
+            // TODO - handle exception
+            logger.error("Exception in copyObject: from:" + fromObjectName + " to:" + toObjectName, e);
+        }
 
     }
 

@@ -25,7 +25,7 @@ import java.io.File;
 public class BenchFlowExperimentManagerService {
 
     // TODO - move this to common library?
-    private static String RUN_PE_PATH = "run-benchflow-experiment";
+    private static String RUN_PATH = "/run";
     private static String STATUS_PE_PATH = "status";
 
     private Logger logger = LoggerFactory.getLogger(BenchFlowExperimentManagerService.class.getSimpleName());
@@ -43,11 +43,11 @@ public class BenchFlowExperimentManagerService {
 
         RunBenchFlowExperimentRequest requestObject = new RunBenchFlowExperimentRequest(experimentID);
 
-        Response runPEResponse = experimentManagerTarget.path(RUN_PE_PATH)
+        Response runPEResponse = experimentManagerTarget.path(experimentID).path(RUN_PATH)
                 .request()
                 .post(Entity.entity(requestObject, MediaType.APPLICATION_JSON));
 
-        if (runPEResponse.getStatus() != Response.Status.OK.getStatusCode()) {
+        if (runPEResponse.getStatus() != Response.Status.NO_CONTENT.getStatusCode()) {
 
             // TODO - handle possible errors and throw exceptions accordingly
 

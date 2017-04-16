@@ -11,3 +11,4 @@ target
 #Local user files
 benchflow_make
 application/src/test/resources/mongo-data
+BenchFlowTestManagerApplicationDemo.java

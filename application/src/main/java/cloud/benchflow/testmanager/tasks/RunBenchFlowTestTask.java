@@ -28,8 +28,8 @@ public class RunBenchFlowTestTask implements Runnable {
 
     private final String testID;
     private final String testDefinitionYamlString;
-    private final InputStream deploymentDescriptorInputStream;
-    private final Map<String, InputStream> bpmnModelInputStreams;
+    private InputStream deploymentDescriptorInputStream;
+    private Map<String, InputStream> bpmnModelInputStreams;
 
     // services
     private final MinioService minioService;
@@ -70,10 +70,9 @@ public class RunBenchFlowTestTask implements Runnable {
             minioService.saveTestDefinition(testID, definitionInputStream);
             minioService.saveTestDeploymentDescriptor(testID, deploymentDescriptorInputStream);
 
-            bpmnModelInputStreams.entrySet()
-                    .forEach(entry -> minioService.saveTestBPMNModel(testID,
-                            entry.getKey(),
-                            entry.getValue()));
+            bpmnModelInputStreams.forEach((fileName, inputStream) -> minioService.saveTestBPMNModel(testID,
+                    fileName,
+                    inputStream));
 
             // add new experiment model
             String experimentID = experimentModelDAO.addExperiment(testID);
@@ -87,12 +86,8 @@ public class RunBenchFlowTestTask implements Runnable {
                     peDefinition);
 
             // save deployment descriptor + models for experiment (one bundle)
-            // TODO - find a solution for how to generalize this
-            minioService.saveTestDeploymentDescriptor(experimentID, deploymentDescriptorInputStream);
-            bpmnModelInputStreams.entrySet()
-                    .forEach(entry -> minioService.saveTestBPMNModel(experimentID,
-                            entry.getKey(),
-                            entry.getValue()));
+            minioService.copyDeploymentDescriptorForExperiment(testID, experimentID);
+            bpmnModelInputStreams.forEach((fileName, inputStream) -> minioService.copyBPMNModelForExperiment(testID, experimentID, fileName));
 
             // run PE on PEManager
             experimentManagerService.runBenchFlowExperiment(experimentID);
