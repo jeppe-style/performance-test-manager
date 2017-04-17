@@ -1,5 +1,6 @@
 package cloud.benchflow.testmanager.resources;
 
+import cloud.benchflow.faban.client.responses.RunStatus;
 import cloud.benchflow.testmanager.api.request.SubmitTrialStatusRequest;
 import cloud.benchflow.testmanager.exceptions.BenchFlowExperimentIDDoesNotExistException;
 import cloud.benchflow.testmanager.exceptions.web.InvalidTrialIDWebException;
@@ -12,15 +13,15 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
-import static cloud.benchflow.testmanager.models.BenchFlowExperimentModel.TrialStatus.SUCCESS;
+import static cloud.benchflow.testmanager.constants.BenchFlowConstants.MODEL_ID_DELIMITER_REGEX;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 15.02.17.
  */
-public class TrialStatusResourceTest {
+public class BenchFlowTrialResourceTest {
 
-    private TrialStatusResource resource;
+    private BenchFlowTrialResource resource;
     private SubmitTrialStatusRequest request;
 
     // mocks
@@ -32,7 +33,7 @@ public class TrialStatusResourceTest {
     @Before
     public void setUp() throws Exception {
 
-        resource = new TrialStatusResource(experimentModelDAOMock);
+        resource = new BenchFlowTrialResource(experimentModelDAOMock);
         request = new SubmitTrialStatusRequest();
     }
 
@@ -42,12 +43,18 @@ public class TrialStatusResourceTest {
         String experimentID = TestConstants.BENCHFLOW_EXPERIMENT_ID;
         long trialNumber = 1;
         String trialID = experimentID + BenchFlowConstants.MODEL_ID_DELIMITER + trialNumber;
-        request.setStatus(SUCCESS);
+        request.setStatus(RunStatus.Code.COMPLETED);
 
-        Mockito.doNothing().when(experimentModelDAOMock).addTrialStatus(experimentID, trialNumber,
-                                                                  request.getStatus());
+        String[] trialIDArray = trialID.split(MODEL_ID_DELIMITER_REGEX);
 
-        resource.submitTrialStatus(trialID, request);
+        String username = trialIDArray[0];
+        String testName = trialIDArray[1];
+        String testNumber = trialIDArray[2];
+        String experimentNumber = trialIDArray[3];
+
+        resource.submitTrialStatus(username, testName, testNumber, experimentNumber, String.valueOf(trialNumber), request);
+
+        Mockito.verify(experimentModelDAOMock, Mockito.times(1)).addTrialStatus(experimentID, trialNumber, request.getStatus());
 
     }
 
@@ -59,15 +66,22 @@ public class TrialStatusResourceTest {
 
         String trialID = experimentID + BenchFlowConstants.MODEL_ID_DELIMITER + trialNumber;
 
-        request.setStatus(SUCCESS);
+        request.setStatus(RunStatus.Code.COMPLETED);
 
         Mockito.doThrow(BenchFlowExperimentIDDoesNotExistException.class).when(experimentModelDAOMock).addTrialStatus(experimentID,
                                                                                                                         trialNumber,
                                                                                                                         request.getStatus());
-
         exception.expect(InvalidTrialIDWebException.class);
 
-        resource.submitTrialStatus(trialID, request);
+
+        String[] trialIDArray = trialID.split(MODEL_ID_DELIMITER_REGEX);
+
+        String username = trialIDArray[0];
+        String testName = trialIDArray[1];
+        String testNumber = trialIDArray[2];
+        String experimentNumber = trialIDArray[3];
+
+        resource.submitTrialStatus(username, testName, testNumber, experimentNumber, String.valueOf(trialNumber), request);
 
     }
 

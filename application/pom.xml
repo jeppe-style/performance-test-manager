@@ -59,6 +59,11 @@
             <artifactId>benchflow-dsl</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.benchflow</groupId>
+            <artifactId>fabanClient-client</artifactId>
+        </dependency>
+
 
         <!--<dependency>-->
         <!--<groupId>io.dropwizard</groupId>-->

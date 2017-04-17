@@ -151,5 +151,6 @@
     <orderEntry type="library" name="Maven: org.scala-lang:scala-reflect:2.11.7" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.16" level="project" />
     <orderEntry type="library" name="Maven: com.github.zafarkhaja:java-semver:0.9.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.benchflow:fabanClient-client:dev-SNAPSHOT" level="project" />
   </component>
 </module>

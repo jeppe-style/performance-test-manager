@@ -11,7 +11,9 @@ import static cloud.benchflow.testmanager.constants.BenchFlowConstants.MODEL_ID_
 public class TestConstants {
 
     public static final String INVALID_BENCHFLOW_TEST_NAME = "invalid";
+    public static final String INVALID_BENCHFLOW_TEST_ID = "benchflow.invalid.1";
     public static final String VALID_BENCHFLOW_TEST_NAME = "testNameExample";
+    public static final String VALID_BENCHFLOW_TEST_ID = "benchflow.testNameExample.1";
 
     public static final String BENCHFLOW_EXPERIMENT_ID = "benchflow.testNameExample.1.1";
 
@@ -25,5 +27,5 @@ public class TestConstants {
 
     public static String VALID_TEST_ID = TEST_USER_NAME + MODEL_ID_DELIMITER + VALID_BENCHFLOW_TEST_NAME + MODEL_ID_DELIMITER + VALID_TEST_NUMBER;
     public static String VALID_EXPERIMENT_ID = VALID_TEST_ID + MODEL_ID_DELIMITER + VALID_EXPERIMENT_NUMBER;
-    public static String VALID_TRIAL_ID = VALID_EXPERIMENT_NUMBER + MODEL_ID_DELIMITER + VALID_TRIAL_NUMBER;
+    public static String VALID_TRIAL_ID = VALID_EXPERIMENT_ID + MODEL_ID_DELIMITER + VALID_TRIAL_NUMBER;
 }

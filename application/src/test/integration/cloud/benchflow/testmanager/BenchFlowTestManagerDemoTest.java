@@ -64,7 +64,7 @@ public class BenchFlowTestManagerDemoTest {
 //                .request(MediaType.APPLICATION_JSON)
 //                .post(Entity.entity(multiPart, multiPart.getMediaType()));
 //
-//        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+//        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getState());
 //
 //        RunBenchFlowTestResponse testResponse = response.readEntity(RunBenchFlowTestResponse.class);
 //

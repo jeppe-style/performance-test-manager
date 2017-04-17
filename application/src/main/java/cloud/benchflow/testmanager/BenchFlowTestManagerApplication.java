@@ -1,10 +1,10 @@
 package cloud.benchflow.testmanager;
 
 import cloud.benchflow.testmanager.configurations.BenchFlowTestManagerConfiguration;
+import cloud.benchflow.testmanager.resources.BenchFlowExperimentResource;
 import cloud.benchflow.testmanager.resources.BenchFlowTestResource;
-import cloud.benchflow.testmanager.resources.BenchFlowTestStateResource;
-import cloud.benchflow.testmanager.resources.BenchFlowTestStatusResource;
-import cloud.benchflow.testmanager.resources.TrialStatusResource;
+import cloud.benchflow.testmanager.resources.BenchFlowUserResource;
+import cloud.benchflow.testmanager.resources.BenchFlowTrialResource;
 import cloud.benchflow.testmanager.services.external.BenchFlowExperimentManagerService;
 import cloud.benchflow.testmanager.services.external.MinioService;
 import cloud.benchflow.testmanager.services.internal.dao.BenchFlowExperimentModelDAO;
@@ -73,23 +73,23 @@ public class BenchFlowTestManagerApplication extends Application<BenchFlowTestMa
 
 
         // resources
-        final BenchFlowTestResource runResource = new BenchFlowTestResource(taskExecutor,
+        final BenchFlowUserResource userResource = new BenchFlowUserResource(taskExecutor,
                                                                                 minioService, testModelDAO, experimentModelDAO, userDAO,
                                                                                 experimentManagerService);
 
-        final BenchFlowTestStatusResource statusResource = new BenchFlowTestStatusResource(testModelDAO);
-        final BenchFlowTestStateResource stateResource = new BenchFlowTestStateResource(testModelDAO);
-        final TrialStatusResource trialStatusResource = new TrialStatusResource(experimentModelDAO);
+        final BenchFlowTestResource testResource = new BenchFlowTestResource(testModelDAO);
+        final BenchFlowExperimentResource experimentResource = new BenchFlowExperimentResource(experimentModelDAO);
+        final BenchFlowTrialResource trialResource = new BenchFlowTrialResource(experimentModelDAO);
 
         // TODO - health checks for all services
 //        final TemplateHealthCheck healthCheck =
 //                new TemplateHealthCheck(configuration.getTemplate());
 //        environment.healthChecks().register("template", healthCheck);
 
-        environment.jersey().register(runResource);
-        environment.jersey().register(statusResource);
-        environment.jersey().register(stateResource);
-        environment.jersey().register(trialStatusResource);
+        environment.jersey().register(userResource);
+        environment.jersey().register(testResource);
+        environment.jersey().register(experimentResource);
+        environment.jersey().register(trialResource);
         
         environment.jersey().register(MultiPartFeature.class);
 

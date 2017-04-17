@@ -1,10 +1,9 @@
 package cloud.benchflow.testmanager.api.request;
 
+import cloud.benchflow.faban.client.responses.RunStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
-
-import static cloud.benchflow.testmanager.models.BenchFlowExperimentModel.TrialStatus;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
@@ -14,20 +13,20 @@ public class SubmitTrialStatusRequest {
 
     @NotNull
     @JsonProperty
-    private TrialStatus status;
+    private RunStatus.Code status;
 
     public SubmitTrialStatusRequest() {
     }
 
-    public SubmitTrialStatusRequest(TrialStatus status) {
+    public SubmitTrialStatusRequest(RunStatus.Code status) {
         this.status = status;
     }
 
-    public TrialStatus getStatus() {
+    public RunStatus.Code getStatus() {
         return status;
     }
 
-    public void setStatus(TrialStatus status) {
+    public void setStatus(RunStatus.Code status) {
         this.status = status;
     }
 }

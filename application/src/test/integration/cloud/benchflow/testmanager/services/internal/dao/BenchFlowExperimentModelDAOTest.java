@@ -1,5 +1,6 @@
 package cloud.benchflow.testmanager.services.internal.dao;
 
+import cloud.benchflow.faban.client.responses.RunStatus;
 import cloud.benchflow.testmanager.exceptions.BenchFlowExperimentIDDoesNotExistException;
 import cloud.benchflow.testmanager.helpers.TestConstants;
 import cloud.benchflow.testmanager.models.BenchFlowExperimentModel;
@@ -15,8 +16,6 @@ import org.junit.rules.ExpectedException;
 
 import static cloud.benchflow.testmanager.constants.BenchFlowConstants.MODEL_ID_DELIMITER;
 import static cloud.benchflow.testmanager.helpers.TestConstants.VALID_BENCHFLOW_TEST_NAME;
-import static cloud.benchflow.testmanager.models.BenchFlowExperimentModel.TrialStatus.RUNNING;
-import static cloud.benchflow.testmanager.models.BenchFlowExperimentModel.TrialStatus.SUCCESS;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -69,20 +68,19 @@ public class BenchFlowExperimentModelDAOTest extends DockerComposeTest {
 
         String experimentID = experimentModelDAO.addExperiment(testID);
 
-        // RUNNING
-        experimentModelDAO.addTrialStatus(experimentID, trialNumber, RUNNING);
-        BenchFlowExperimentModel.TrialStatus trialStatus = experimentModelDAO.getTrialStatus(experimentID,
-                                                                                               trialNumber);
+        // STARTED
+        experimentModelDAO.addTrialStatus(experimentID, trialNumber, RunStatus.Code.STARTED);
+        RunStatus.Code trialStatus = experimentModelDAO.getTrialStatus(experimentID, trialNumber);
 
         Assert.assertNotNull(trialStatus);
-        assertEquals(RUNNING, trialStatus);
+        assertEquals(RunStatus.Code.STARTED, trialStatus);
 
-        // SUCCESS
-        experimentModelDAO.addTrialStatus(experimentID, trialNumber, SUCCESS);
+        // COMPLETED
+        experimentModelDAO.addTrialStatus(experimentID, trialNumber, RunStatus.Code.COMPLETED);
         trialStatus = experimentModelDAO.getTrialStatus(experimentID, trialNumber);
 
         Assert.assertNotNull(trialStatus);
-        assertEquals(SUCCESS, trialStatus);
+        assertEquals(RunStatus.Code.COMPLETED, trialStatus);
 
     }
 
@@ -115,7 +113,7 @@ public class BenchFlowExperimentModelDAOTest extends DockerComposeTest {
 
         exception.expect(BenchFlowExperimentIDDoesNotExistException.class);
 
-        experimentModelDAO.addTrialStatus("not_valid", 1, SUCCESS);
+        experimentModelDAO.addTrialStatus("not_valid", 1, RunStatus.Code.COMPLETED);
 
     }
 

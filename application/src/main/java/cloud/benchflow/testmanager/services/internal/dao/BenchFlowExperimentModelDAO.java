@@ -1,5 +1,6 @@
 package cloud.benchflow.testmanager.services.internal.dao;
 
+import cloud.benchflow.faban.client.responses.RunStatus;
 import cloud.benchflow.testmanager.exceptions.BenchFlowExperimentIDDoesNotExistException;
 import cloud.benchflow.testmanager.exceptions.BenchFlowTestIDDoesNotExistException;
 import cloud.benchflow.testmanager.models.BenchFlowExperimentModel;
@@ -97,12 +98,32 @@ public class BenchFlowExperimentModelDAO {
     }
 
     /**
+     *
+     * @param experimentID
+     * @param state
+     * @throws BenchFlowExperimentIDDoesNotExistException
+     */
+    public synchronized void setExperimentState(String experimentID, BenchFlowExperimentModel.BenchFlowExperimentState state) throws BenchFlowExperimentIDDoesNotExistException {
+
+        logger.info("setExperimentState: " + experimentID + " : " + state.name());
+
+        final BenchFlowExperimentModel experimentModel;
+
+        experimentModel = getExperiment(experimentID);
+
+        experimentModel.setState(state);
+
+        datastore.save(experimentModel);
+
+    }
+
+    /**
      * @param experimentID
      * @param trialNUmber
      * @param status
      * @throws BenchFlowTestIDDoesNotExistException
      */
-    public synchronized void addTrialStatus(String experimentID, long trialNUmber, BenchFlowExperimentModel.TrialStatus status) throws BenchFlowExperimentIDDoesNotExistException {
+    public synchronized void addTrialStatus(String experimentID, long trialNUmber, RunStatus.Code status) throws BenchFlowExperimentIDDoesNotExistException {
 
         logger.info(
                 "addTrialStatus: " + experimentID + MODEL_ID_DELIMITER + trialNUmber + " : " + status.name());
@@ -122,7 +143,7 @@ public class BenchFlowExperimentModelDAO {
      * @return
      * @throws BenchFlowExperimentIDDoesNotExistException
      */
-    public synchronized BenchFlowExperimentModel.TrialStatus getTrialStatus(String experimentID, long trialNumber) throws BenchFlowExperimentIDDoesNotExistException {
+    public synchronized RunStatus.Code getTrialStatus(String experimentID, long trialNumber) throws BenchFlowExperimentIDDoesNotExistException {
 
         logger.info("getTrialStatus: " + experimentID + MODEL_ID_DELIMITER + trialNumber);
 

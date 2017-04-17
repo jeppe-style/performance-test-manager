@@ -1,5 +1,7 @@
 package cloud.benchflow.testmanager.models;
 
+import cloud.benchflow.faban.client.responses.RunStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mongodb.morphia.annotations.*;
 import org.mongodb.morphia.utils.IndexType;
 
@@ -22,12 +24,16 @@ public class BenchFlowExperimentModel {
     @Id
     private String id;
     // used for potential sharding in the future
+    @JsonIgnore
     private String hashedID;
+    @JsonIgnore
     private String testID;
+    @JsonIgnore
     private long number;
     private Date start = new Date();
     private Date lastModified = new Date();
-    private Map<Long, TrialStatus> trials = new HashMap<>();
+    private BenchFlowExperimentState state;
+    private Map<Long, RunStatus.Code> trials = new HashMap<>();
 
     BenchFlowExperimentModel() {
         // Empty constructor for MongoDB + Morphia
@@ -41,6 +47,7 @@ public class BenchFlowExperimentModel {
         this.id = testID + MODEL_ID_DELIMITER + experimentNumber;
 
         this.hashedID = this.id;
+        this.state = BenchFlowExperimentState.READY;
 
     }
 
@@ -61,19 +68,30 @@ public class BenchFlowExperimentModel {
         return lastModified;
     }
 
-    public void setTrialStatus(long trialNumber, TrialStatus status) {
+    public BenchFlowExperimentState getState() {
+        return state;
+    }
+
+    public void setState(BenchFlowExperimentState state) {
+        this.state = state;
+    }
+
+    public Map<Long, RunStatus.Code> getTrials() {
+        return trials;
+    }
+
+    public void setTrialStatus(long trialNumber, RunStatus.Code status) {
 
         trials.put(trialNumber, status);
 
     }
 
-    public TrialStatus getTrialStatus(long trialNumber) {
+    public RunStatus.Code getTrialStatus(long trialNumber) {
 
         return trials.get(trialNumber);
 
     }
 
-    public enum TrialStatus {RUNNING, SUCCESS, FAILURE, ERROR}
-
     public enum BenchFlowExperimentState {READY, RUNNING, ABORTED, COMPLETED}
+
 }

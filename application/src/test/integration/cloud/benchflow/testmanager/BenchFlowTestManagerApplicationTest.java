@@ -8,7 +8,8 @@ import cloud.benchflow.testmanager.constants.BenchFlowConstants;
 import cloud.benchflow.testmanager.helpers.TestConstants;
 import cloud.benchflow.testmanager.models.BenchFlowTestModel;
 import cloud.benchflow.testmanager.models.User;
-import cloud.benchflow.testmanager.resources.BenchFlowTestStateResource;
+import cloud.benchflow.testmanager.resources.BenchFlowTestResource;
+import cloud.benchflow.testmanager.resources.BenchFlowUserResource;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.testing.ConfigOverride;
@@ -57,7 +58,7 @@ public class BenchFlowTestManagerApplicationTest extends DockerComposeTest {
 
         Client client = new JerseyClientBuilder(RULE.getEnvironment()).using(configuration).build("test client");
 
-        String benchFlowTestName = "testNameExample";
+        String testName = "testNameExample";
         User user = BenchFlowConstants.BENCHFLOW_USER;
 
         FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("benchFlowTestBundle",
@@ -69,7 +70,7 @@ public class BenchFlowTestManagerApplicationTest extends DockerComposeTest {
         multiPart.bodyPart(fileDataBodyPart);
 
         Response response = client
-                .target(String.format("http://localhost:%d/benchflow-test", RULE.getLocalPort()))
+                .target(String.format("http://localhost:%d/" + user.getUsername() + BenchFlowUserResource.RUN_PATH, RULE.getLocalPort()))
                 .register(MultiPartFeature.class)
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(multiPart, multiPart.getMediaType()));
@@ -79,7 +80,7 @@ public class BenchFlowTestManagerApplicationTest extends DockerComposeTest {
         RunBenchFlowTestResponse testResponse = response.readEntity(RunBenchFlowTestResponse.class);
 
         Assert.assertNotNull(testResponse);
-        Assert.assertTrue(testResponse.getTestID().contains(benchFlowTestName));
+        Assert.assertTrue(testResponse.getTestID().contains(testName));
 
     }
 
@@ -93,7 +94,7 @@ public class BenchFlowTestManagerApplicationTest extends DockerComposeTest {
 
         ChangeBenchFlowTestStateRequest stateRequest = new ChangeBenchFlowTestStateRequest(state);
 
-        String target = "http://localhost:" + RULE.getLocalPort() + BenchFlowTestStateResource.ROOT_PATH + testID + "/state";
+        String target = "http://localhost:" + RULE.getLocalPort() + "/" + BenchFlowConstants.getPathFromBenchFlowID(testID) + BenchFlowTestResource.STATE_PATH;
 
         Response response = client
                 .target(target)

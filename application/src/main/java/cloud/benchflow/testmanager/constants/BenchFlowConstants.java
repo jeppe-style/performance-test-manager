@@ -27,5 +27,19 @@ public class BenchFlowConstants {
     // MongoDB
     public static final String DB_NAME = "benchflow-test-manager";
     public static final String MODEL_ID_DELIMITER = ".";
+    public static final String MODEL_ID_DELIMITER_REGEX = "\\.";
     public static final User BENCHFLOW_USER = new User("benchflow");
+
+
+    public static String getExperimentID(String username, String testName, String testNumber, String experimentNumber) {
+        return username + MODEL_ID_DELIMITER + testName + MODEL_ID_DELIMITER + testNumber + MODEL_ID_DELIMITER + experimentNumber;
+    }
+
+    public static String getTestID(String username, String testName, String testNumber) {
+        return username + MODEL_ID_DELIMITER + testName + MODEL_ID_DELIMITER + testNumber;
+    }
+
+    public static String getPathFromBenchFlowID(String benchFlowID) {
+        return "/" + benchFlowID.replace(MODEL_ID_DELIMITER, "/");
+    }
 }

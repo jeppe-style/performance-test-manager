@@ -27,6 +27,8 @@
         <docker-compose-rule-junit4.version>0.31.1</docker-compose-rule-junit4.version>
         <wiremock.version>2.5.1</wiremock.version>
         <dropwizard-swagger.version>1.0.6-1</dropwizard-swagger.version>
+        <benchflow-dsl.version>0.1.0</benchflow-dsl.version>
+        <fabanClient-client.version>dev-SNAPSHOT</fabanClient-client.version>
     </properties>
 
     <!-- for docker-compose-rule -->
@@ -122,7 +124,15 @@
             <dependency>
                 <groupId>cloud.benchflow</groupId>
                 <artifactId>benchflow-dsl</artifactId>
-                <version>0.1.0</version>
+                <version>${benchflow-dsl.version}</version>
+            </dependency>
+
+            <!--needed to get prostateatus-->
+            <!--TODO - mstateatus to common library-->
+            <dependency>
+                <groupId>com.github.benchflow</groupId>
+                <artifactId>fabanClient-client</artifactId>
+                <version>${fabanClient-client.version}</version>
             </dependency>
 
 

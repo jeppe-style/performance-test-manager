@@ -1,5 +1,6 @@
 package cloud.benchflow.testmanager.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mongodb.morphia.annotations.*;
 import org.mongodb.morphia.utils.IndexType;
 
@@ -18,6 +19,11 @@ import static cloud.benchflow.testmanager.models.BenchFlowTestModel.BenchFlowTes
 @Indexes({@Index(options = @IndexOptions(), fields = {@Field(value = "hashedID", type = IndexType.HASHED)})})
 public class BenchFlowTestModel {
 
+    /**
+     * NOTE: This class is also annotated with Jackson annotation since we then easily can return it
+     * when the user asks for the status of a given test. This annotation is not needed to store in MongoDB.
+     */
+
     public static final String ID_FIELD_NAME = "id";
     public static final String HASHED_ID_FIELD_NAME = "hashedID";
     @Id
@@ -27,10 +33,14 @@ public class BenchFlowTestModel {
 
     //    userName.testName.testNumber.experimentNumber.trialNumber
     // used for potential sharing in the future
+    @JsonIgnore
     private String hashedID;
     @Reference
+    @JsonIgnore
     private User user;
+    @JsonIgnore
     private String name;
+    @JsonIgnore
     private long number;
     private Date start = new Date();
     private Date lastModified = new Date();
@@ -110,6 +120,7 @@ public class BenchFlowTestModel {
 
     }
 
+    @JsonIgnore
     public long getNextExperimentNumber() {
 
         return experiments.size() + 1;
