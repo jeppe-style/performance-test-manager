@@ -10,6 +10,8 @@ import cloud.benchflow.testmanager.models.BenchFlowTestModel;
 import cloud.benchflow.testmanager.models.User;
 import cloud.benchflow.testmanager.resources.BenchFlowTestResource;
 import cloud.benchflow.testmanager.resources.BenchFlowUserResource;
+import cloud.benchflow.testmanager.services.external.MinioService;
+import cloud.benchflow.testmanager.services.internal.dao.BenchFlowTestModelDAO;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.testing.ConfigOverride;
@@ -70,7 +72,10 @@ public class BenchFlowTestManagerApplicationTest extends DockerComposeTest {
         multiPart.bodyPart(fileDataBodyPart);
 
         Response response = client
-                .target(String.format("http://localhost:%d/" + user.getUsername() + BenchFlowUserResource.RUN_PATH, RULE.getLocalPort()))
+                .target(String.format("http://localhost:%d/", RULE.getLocalPort()))
+                .path(BenchFlowConstants.getPathFromUsername(user.getUsername()))
+                .path(BenchFlowConstants.TESTS_PATH)
+                .path(BenchFlowTestResource.RUN_PATH)
                 .register(MultiPartFeature.class)
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(multiPart, multiPart.getMediaType()));
@@ -94,10 +99,12 @@ public class BenchFlowTestManagerApplicationTest extends DockerComposeTest {
 
         ChangeBenchFlowTestStateRequest stateRequest = new ChangeBenchFlowTestStateRequest(state);
 
-        String target = "http://localhost:" + RULE.getLocalPort() + "/" + BenchFlowConstants.getPathFromBenchFlowID(testID) + BenchFlowTestResource.STATE_PATH;
+        String target = "http://localhost:" + RULE.getLocalPort();
 
         Response response = client
                 .target(target)
+                .path(BenchFlowConstants.getPathFromTestID(testID))
+                .path(BenchFlowTestResource.STATE_PATH)
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.entity(stateRequest, MediaType.APPLICATION_JSON));
 
@@ -109,4 +116,28 @@ public class BenchFlowTestManagerApplicationTest extends DockerComposeTest {
 
     }
 
+    @Test
+    public void getTestStatus() throws Exception {
+
+        BenchFlowTestModelDAO testModelDAO = new BenchFlowTestModelDAO(RULE.getConfiguration().getMongoDBFactory().build());
+
+        String testID = testModelDAO.addTestModel(TestConstants.VALID_BENCHFLOW_TEST_NAME, TestConstants.TEST_USER);
+
+        Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+
+        String target = "http://localhost:" + RULE.getLocalPort();
+
+        Response response = client
+                .target(target)
+                .path(BenchFlowConstants.getPathFromTestID(testID))
+                .path(BenchFlowTestResource.STATUS_PATH)
+                .request()
+                .get();
+
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        BenchFlowTestModel testModel = response.readEntity(BenchFlowTestModel.class);
+        Assert.assertEquals(testID, testModel.getId());
+
+    }
 }

@@ -9,16 +9,16 @@ import javax.validation.constraints.NotNull;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 16.02.17.
  */
-public class SubmitExperimentStateRequest {
+public class BenchFlowExperimentStateRequest {
 
     @NotNull
     @JsonProperty
     private BenchFlowExperimentModel.BenchFlowExperimentState state;
 
-    public SubmitExperimentStateRequest() {
+    public BenchFlowExperimentStateRequest() {
     }
 
-    public SubmitExperimentStateRequest(BenchFlowExperimentModel.BenchFlowExperimentState state) {
+    public BenchFlowExperimentStateRequest(BenchFlowExperimentModel.BenchFlowExperimentState state) {
         this.state = state;
     }
 

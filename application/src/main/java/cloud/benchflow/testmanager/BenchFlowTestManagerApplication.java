@@ -3,8 +3,8 @@ package cloud.benchflow.testmanager;
 import cloud.benchflow.testmanager.configurations.BenchFlowTestManagerConfiguration;
 import cloud.benchflow.testmanager.resources.BenchFlowExperimentResource;
 import cloud.benchflow.testmanager.resources.BenchFlowTestResource;
-import cloud.benchflow.testmanager.resources.BenchFlowUserResource;
 import cloud.benchflow.testmanager.resources.BenchFlowTrialResource;
+import cloud.benchflow.testmanager.resources.BenchFlowUserResource;
 import cloud.benchflow.testmanager.services.external.BenchFlowExperimentManagerService;
 import cloud.benchflow.testmanager.services.external.MinioService;
 import cloud.benchflow.testmanager.services.internal.dao.BenchFlowExperimentModelDAO;
@@ -73,11 +73,9 @@ public class BenchFlowTestManagerApplication extends Application<BenchFlowTestMa
 
 
         // resources
-        final BenchFlowUserResource userResource = new BenchFlowUserResource(taskExecutor,
-                                                                                minioService, testModelDAO, experimentModelDAO, userDAO,
-                                                                                experimentManagerService);
+//        final BenchFlowUserResource userResource = new BenchFlowUserResource();
 
-        final BenchFlowTestResource testResource = new BenchFlowTestResource(testModelDAO);
+        final BenchFlowTestResource testResource = new BenchFlowTestResource(taskExecutor, minioService, testModelDAO, experimentModelDAO, userDAO, experimentManagerService);
         final BenchFlowExperimentResource experimentResource = new BenchFlowExperimentResource(experimentModelDAO);
         final BenchFlowTrialResource trialResource = new BenchFlowTrialResource(experimentModelDAO);
 
@@ -86,11 +84,12 @@ public class BenchFlowTestManagerApplication extends Application<BenchFlowTestMa
 //                new TemplateHealthCheck(configuration.getTemplate());
 //        environment.healthChecks().register("template", healthCheck);
 
-        environment.jersey().register(userResource);
+//        environment.jersey().register(userResource);
         environment.jersey().register(testResource);
         environment.jersey().register(experimentResource);
         environment.jersey().register(trialResource);
-        
+
+        // add support for submitting files
         environment.jersey().register(MultiPartFeature.class);
 
     }

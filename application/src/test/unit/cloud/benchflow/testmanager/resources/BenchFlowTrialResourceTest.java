@@ -41,7 +41,7 @@ public class BenchFlowTrialResourceTest {
     public void submitTrialStatus() throws Exception {
 
         String experimentID = TestConstants.BENCHFLOW_EXPERIMENT_ID;
-        long trialNumber = 1;
+        int trialNumber = 1;
         String trialID = experimentID + BenchFlowConstants.MODEL_ID_DELIMITER + trialNumber;
         request.setStatus(RunStatus.Code.COMPLETED);
 
@@ -49,10 +49,10 @@ public class BenchFlowTrialResourceTest {
 
         String username = trialIDArray[0];
         String testName = trialIDArray[1];
-        String testNumber = trialIDArray[2];
-        String experimentNumber = trialIDArray[3];
+        int testNumber = Integer.parseInt(trialIDArray[2]);
+        int experimentNumber = Integer.parseInt(trialIDArray[3]);
 
-        resource.submitTrialStatus(username, testName, testNumber, experimentNumber, String.valueOf(trialNumber), request);
+        resource.submitTrialStatus(username, testName, testNumber, experimentNumber, trialNumber, request);
 
         Mockito.verify(experimentModelDAOMock, Mockito.times(1)).addTrialStatus(experimentID, trialNumber, request.getStatus());
 
@@ -62,7 +62,7 @@ public class BenchFlowTrialResourceTest {
     public void submitInvalidTrialStatus() throws Exception {
 
         String experimentID = TestConstants.BENCHFLOW_EXPERIMENT_ID;
-        long trialNumber = 1;
+        int trialNumber = 1;
 
         String trialID = experimentID + BenchFlowConstants.MODEL_ID_DELIMITER + trialNumber;
 
@@ -78,10 +78,10 @@ public class BenchFlowTrialResourceTest {
 
         String username = trialIDArray[0];
         String testName = trialIDArray[1];
-        String testNumber = trialIDArray[2];
-        String experimentNumber = trialIDArray[3];
+        int testNumber = Integer.parseInt(trialIDArray[2]);
+        int experimentNumber = Integer.parseInt(trialIDArray[3]);
 
-        resource.submitTrialStatus(username, testName, testNumber, experimentNumber, String.valueOf(trialNumber), request);
+        resource.submitTrialStatus(username, testName, testNumber, experimentNumber, trialNumber, request);
 
     }
 

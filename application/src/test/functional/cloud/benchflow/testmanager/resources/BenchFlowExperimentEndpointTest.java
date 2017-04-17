@@ -1,8 +1,6 @@
 package cloud.benchflow.testmanager.resources;
 
-import cloud.benchflow.faban.client.responses.RunStatus;
-import cloud.benchflow.testmanager.api.request.SubmitExperimentStateRequest;
-import cloud.benchflow.testmanager.api.request.SubmitTrialStatusRequest;
+import cloud.benchflow.testmanager.api.request.BenchFlowExperimentStateRequest;
 import cloud.benchflow.testmanager.constants.BenchFlowConstants;
 import cloud.benchflow.testmanager.helpers.TestConstants;
 import cloud.benchflow.testmanager.models.BenchFlowExperimentModel;
@@ -36,10 +34,10 @@ public class BenchFlowExperimentEndpointTest {
 
         String experimentID = TestConstants.VALID_EXPERIMENT_ID;
 
-        SubmitExperimentStateRequest request = new SubmitExperimentStateRequest(BenchFlowExperimentModel.BenchFlowExperimentState.COMPLETED);
+        BenchFlowExperimentStateRequest request = new BenchFlowExperimentStateRequest(BenchFlowExperimentModel.BenchFlowExperimentState.COMPLETED);
 
         Response response = resources.client()
-                .target(BenchFlowConstants.getPathFromBenchFlowID(experimentID))
+                .target(BenchFlowConstants.getPathFromExperimentID(experimentID))
                 .path(BenchFlowExperimentResource.STATE_PATH)
                 .request()
                 .put(Entity.entity(request, MediaType.APPLICATION_JSON));

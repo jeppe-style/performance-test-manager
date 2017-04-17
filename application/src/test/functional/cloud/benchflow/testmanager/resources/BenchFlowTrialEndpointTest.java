@@ -37,7 +37,7 @@ public class BenchFlowTrialEndpointTest {
         SubmitTrialStatusRequest statusRequest = new SubmitTrialStatusRequest(RunStatus.Code.COMPLETED);
 
         Response response = resources.client()
-                .target(BenchFlowConstants.getPathFromBenchFlowID(trialID))
+                .target(BenchFlowConstants.getPathFromTrialID(trialID))
                 .path(BenchFlowTrialResource.STATUS_PATH)
                 .request()
                 .put(Entity.entity(statusRequest, MediaType.APPLICATION_JSON));

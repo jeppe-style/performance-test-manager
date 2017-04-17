@@ -1,5 +1,6 @@
 package cloud.benchflow.testmanager.services.external;
 
+import cloud.benchflow.testmanager.constants.BenchFlowConstants;
 import cloud.benchflow.testmanager.models.BenchFlowExperimentModel;
 import org.glassfish.jersey.media.multipart.*;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
@@ -26,7 +27,7 @@ public class BenchFlowExperimentManagerService {
 
     // TODO - move this to common library?
     private static String RUN_PATH = "/run";
-    private static String STATUS_PE_PATH = "status";
+    private static String STATE_PE_PATH = "/state";
 
     private Logger logger = LoggerFactory.getLogger(BenchFlowExperimentManagerService.class.getSimpleName());
 
@@ -41,31 +42,33 @@ public class BenchFlowExperimentManagerService {
 
         logger.info("runBenchFlowExperiment: " + experimentID);
 
-        RunBenchFlowExperimentRequest requestObject = new RunBenchFlowExperimentRequest(experimentID);
-
-        Response runPEResponse = experimentManagerTarget.path(experimentID).path(RUN_PATH)
+        Response runPEResponse = experimentManagerTarget
+                .path(BenchFlowConstants.getPathFromExperimentID(experimentID))
+                .path(RUN_PATH)
                 .request()
-                .post(Entity.entity(requestObject, MediaType.APPLICATION_JSON));
+                .post(null);
 
         if (runPEResponse.getStatus() != Response.Status.NO_CONTENT.getStatusCode()) {
 
             // TODO - handle possible errors and throw exceptions accordingly
-
             logger.error("runBenchFlowExperiment: error connecting - " + runPEResponse.getStatus());
+
+        } else {
+            logger.info("runBenchFlowExperiment: connected successfully");
         }
 
     }
 
-    public BenchFlowExperimentModel.BenchFlowExperimentState abortBenchFlowExperiment(String testID, long experimentID) {
+    public BenchFlowExperimentModel.BenchFlowExperimentState abortBenchFlowExperiment(String experimentID) {
 
-        logger.info("abortBenchFlowExperiment: " + testID + "/" + experimentID);
+        logger.info("abortBenchFlowExperiment: " + experimentID);
 
         BenchFlowExperimentStateEntity stateEntity = new BenchFlowExperimentStateEntity(
                 BenchFlowExperimentModel.BenchFlowExperimentState.ABORTED);
 
-        Response abortPEResponse = experimentManagerTarget.path(testID)
-                .path(String.valueOf(experimentID))
-                .path(STATUS_PE_PATH)
+        Response abortPEResponse = experimentManagerTarget
+                .path(BenchFlowConstants.getPathFromExperimentID(experimentID))
+                .path(STATE_PE_PATH)
                 .request().post(Entity.entity(stateEntity, MediaType.APPLICATION_JSON));
 
         if (abortPEResponse.getStatus() != Response.Status.OK.getStatusCode()) {
@@ -78,53 +81,6 @@ public class BenchFlowExperimentManagerService {
         BenchFlowExperimentStateEntity responseStateEntity = abortPEResponse.readEntity(BenchFlowExperimentStateEntity.class);
 
         return responseStateEntity.getState();
-    }
-
-    public void runBenchFlowExperimentDemo(String experimentID, File experimentBundleFile) {
-
-        logger.info("runBenchFlowExperimentDemo: " + experimentID);
-
-        FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("experiment", experimentBundleFile, MediaType.APPLICATION_OCTET_STREAM_TYPE);
-
-        MultiPart multiPart = new FormDataMultiPart();
-        multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
-        multiPart.bodyPart(fileDataBodyPart);
-
-        String fileName = experimentBundleFile.getName().split("\\.")[0];
-
-        Response response = experimentManagerTarget
-                .path("/run/" + fileName)
-                .register(MultiPartFeature.class)
-                .request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(multiPart, multiPart.getMediaType()));
-
-        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-
-            logger.error("runBenchFlowExperiment: error connecting - " + response.getStatus());
-        }
-
-        logger.info("submitted experiment with response: " + response.readEntity(String.class));
-
-
-    }
-
-    // TODO - move this to common library?
-    private class RunBenchFlowExperimentRequest {
-
-        private String experimentID;
-
-        public RunBenchFlowExperimentRequest(String experimentID) {
-            this.experimentID = experimentID;
-        }
-
-        public String getExperimentID() {
-            return experimentID;
-        }
-
-        public void setExperimentID(String experimentID) {
-            this.experimentID = experimentID;
-        }
-
     }
 
     // TODO - move this to common library?

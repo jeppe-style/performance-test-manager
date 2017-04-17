@@ -11,17 +11,17 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
-
-import static cloud.benchflow.testmanager.constants.BenchFlowConstants.MODEL_ID_DELIMITER;
-import static cloud.benchflow.testmanager.constants.BenchFlowConstants.MODEL_ID_DELIMITER_REGEX;
 
 /**
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 13.02.17.
  */
-@Path("/{username}/{testName}/{testNumber}/{experimentNumber}/{trialNumber}")
+@Path("/v1/users/{username}/tests/{testName}/{testNumber}/experiments/{experimentNumber}/trials")
 @Api(value = "benchflow-trial")
 public class BenchFlowTrialResource {
 
@@ -36,22 +36,25 @@ public class BenchFlowTrialResource {
     }
 
     @PUT
-    @Path("/status")
+    @Path("/{trialNumber}/status")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void submitTrialStatus(@PathParam("username") String username,
+    public void submitTrialStatus(
+            @PathParam("username") String username,
             @PathParam("testName") String testName,
-            @PathParam("testNumber") String testNumber,
-            @PathParam("experimentNumber") String experimentNumber,
-            @PathParam("trialNumber") String trialNumber,
+            @PathParam("testNumber") int testNumber,
+            @PathParam("experimentNumber") int experimentNumber,
+            @PathParam("trialNumber") int trialNumber,
             @NotNull @Valid final SubmitTrialStatusRequest statusRequest) {
 
-        logger.info("request received: POST /" + username + "/" + testName + "/" + testNumber + "/" + experimentNumber + "/" + trialNumber +
-                            STATUS_PATH + " : " + statusRequest.getStatus().name());
 
         String experimentID = BenchFlowConstants.getExperimentID(username, testName, testNumber, experimentNumber);
+        String trialID = BenchFlowConstants.getTrialID(username, testName, testNumber, experimentNumber, trialNumber);
+
+        logger.info("request received: POST " + BenchFlowConstants.getPathFromTrialID(trialID) +
+                STATUS_PATH + " : " + statusRequest.getStatus().name());
 
         try {
-            experimentModelDAO.addTrialStatus(experimentID, Long.parseLong(trialNumber), statusRequest.getStatus());
+            experimentModelDAO.addTrialStatus(experimentID, trialNumber, statusRequest.getStatus());
 
         } catch (BenchFlowExperimentIDDoesNotExistException e) {
             throw new InvalidTrialIDWebException();
