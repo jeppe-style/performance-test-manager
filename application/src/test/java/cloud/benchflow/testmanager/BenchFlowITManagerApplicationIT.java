@@ -9,8 +9,6 @@ import cloud.benchflow.testmanager.helpers.TestConstants;
 import cloud.benchflow.testmanager.models.BenchFlowTestModel;
 import cloud.benchflow.testmanager.models.User;
 import cloud.benchflow.testmanager.resources.BenchFlowTestResource;
-import cloud.benchflow.testmanager.resources.BenchFlowUserResource;
-import cloud.benchflow.testmanager.services.external.MinioService;
 import cloud.benchflow.testmanager.services.internal.dao.BenchFlowTestModelDAO;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
@@ -33,7 +31,7 @@ import javax.ws.rs.core.Response;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 18.02.17.
  */
-public class BenchFlowTestManagerApplicationTest extends DockerComposeTest {
+public class BenchFlowITManagerApplicationIT extends DockerComposeIT {
 
 
     @Rule

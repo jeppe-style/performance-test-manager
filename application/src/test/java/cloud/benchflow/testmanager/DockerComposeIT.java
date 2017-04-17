@@ -15,7 +15,7 @@ import java.io.IOException;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 02.03.17.
  */
-public class DockerComposeTest {
+public class DockerComposeIT {
 
     private static String MONGO_NAME = "mongo";
     private static int MONGO_PORT = 27017;

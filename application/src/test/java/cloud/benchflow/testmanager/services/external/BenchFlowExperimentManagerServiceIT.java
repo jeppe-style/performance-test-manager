@@ -7,7 +7,7 @@ import org.junit.Test;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 24.02.17.
  */
-public class BenchFlowExperimentManagerServiceTest {
+public class BenchFlowExperimentManagerServiceIT {
     @Before
     public void setUp() throws Exception {
         // TODO

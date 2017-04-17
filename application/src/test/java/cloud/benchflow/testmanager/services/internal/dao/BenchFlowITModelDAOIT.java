@@ -4,7 +4,7 @@ import cloud.benchflow.testmanager.exceptions.BenchFlowTestIDDoesNotExistExcepti
 import cloud.benchflow.testmanager.helpers.TestConstants;
 import cloud.benchflow.testmanager.models.BenchFlowTestModel;
 import cloud.benchflow.testmanager.models.User;
-import cloud.benchflow.testmanager.DockerComposeTest;
+import cloud.benchflow.testmanager.DockerComposeIT;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 14.02.17.
  */
-public class BenchFlowTestModelDAOTest extends DockerComposeTest{
+public class BenchFlowITModelDAOIT extends DockerComposeIT {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();

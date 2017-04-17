@@ -2,7 +2,7 @@ package cloud.benchflow.testmanager.services.internal.dao;
 
 import cloud.benchflow.testmanager.exceptions.UserIDAlreadyExistsException;
 import cloud.benchflow.testmanager.models.User;
-import cloud.benchflow.testmanager.DockerComposeTest;
+import cloud.benchflow.testmanager.DockerComposeIT;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 22.02.17.
  */
-public class UserDAOTest extends DockerComposeTest {
+public class UserDAOIT extends DockerComposeIT {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();

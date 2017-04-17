@@ -2,7 +2,7 @@ package cloud.benchflow.testmanager.services.external;
 
 import cloud.benchflow.testmanager.archive.TestArchives;
 import cloud.benchflow.testmanager.constants.BenchFlowConstants;
-import cloud.benchflow.testmanager.DockerComposeTest;
+import cloud.benchflow.testmanager.DockerComposeIT;
 import io.minio.MinioClient;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -21,7 +21,7 @@ import static cloud.benchflow.testmanager.helpers.TestConstants.VALID_TEST_ID;
  * @author Jesper Findahl (jesper.findahl@usi.ch)
  *         created on 16.02.17.
  */
-public class MinioServiceTest extends DockerComposeTest{
+public class MinioServiceIT extends DockerComposeIT {
 
     private MinioService minioService;
 
@@ -38,7 +38,7 @@ public class MinioServiceTest extends DockerComposeTest{
 
         String minioEndpoint = "http://" + MINIO_CONTAINER.getIp() + ":" + MINIO_CONTAINER.getExternalPort();
 
-        MinioClient minioClient = new MinioClient(minioEndpoint, DockerComposeTest.MINIO_ACCESS_KEY, DockerComposeTest.MINIO_SECRET_KEY);
+        MinioClient minioClient = new MinioClient(minioEndpoint, DockerComposeIT.MINIO_ACCESS_KEY, DockerComposeIT.MINIO_SECRET_KEY);
 
         if (!minioClient.bucketExists(BenchFlowConstants.TESTS_BUCKET))
             minioClient.makeBucket(BenchFlowConstants.TESTS_BUCKET);
